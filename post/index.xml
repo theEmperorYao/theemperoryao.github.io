@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on My New Hugo Site</title>
+    <link>https://theemperoryao.github.io/post/</link>
+    <description>Recent content in Posts on My New Hugo Site</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 21 Mar 2020 23:29:33 +0800</lastBuildDate>
+    
+	<atom:link href="https://theemperoryao.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>设计模式（设计模式之禅）</title>
+      <link>https://theemperoryao.github.io/post/blog/</link>
+      <pubDate>Sat, 21 Mar 2020 23:29:33 +0800</pubDate>
+      
+      <guid>https://theemperoryao.github.io/post/blog/</guid>
+      <description>设计模式（设计模式之禅）  1.六大原责 1.1单一职责原则 1.2里氏替换原则 定义：
+ 1）如果对每一个类型为S的对象o1，都有类型为T的对 象o2，使得以T定义的所有程序P在所有的对象o1都代换成o2时，程序P的行为没有发生变 化，那么类型S是类型T的子类型。
+2）所有引用基类的地方必须能透明地使用其子类的对象
+ 简单来说，只要是父类能出现的地方，子类就能出现，且不会出现任何异常和错误，反过来不一定成立。
+覆盖或实现父类方法时输入参数可以被放大 class Father { public Collection doSomething(HashMap hashMap){ System.out.println(&amp;#34;父类被执行。。。&amp;#34;); return hashMap.values(); } } class Son extends Father{ public Collection doSomething(Map map){ System.out.println(&amp;#34;子类被执行。。。&amp;#34;); return map.values(); } } public class Client{ public static void main(String[] args) { invoker(); } public static void invoker(){ // Father f=new Father();  Son f = new Son(); HashMap hashMap= new HashMap&amp;lt;&amp;gt;(); f.doSomething(hashMap); } } 这里发生了一个现象，不论是f是Father类型还是Son类型，结果输出都是 “父类被执行。。。”</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>设计模式（设计模式之禅） // My New Hugo Site</title>
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.67.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="John Doe" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://theemperoryao.github.io/css/main.min.f90f5edd436ec7b74ad05479a05705770306911f721193e7845948fb07fe1335.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="设计模式（设计模式之禅）"/>
+<meta name="twitter:description" content="设计模式（设计模式之禅）  1.六大原责 1.1单一职责原则 1.2里氏替换原则 定义：
+ 1）如果对每一个类型为S的对象o1，都有类型为T的对 象o2，使得以T定义的所有程序P在所有的对象o1都代换成o2时，程序P的行为没有发生变 化，那么类型S是类型T的子类型。
+2）所有引用基类的地方必须能透明地使用其子类的对象
+ 简单来说，只要是父类能出现的地方，子类就能出现，且不会出现任何异常和错误，反过来不一定成立。
+覆盖或实现父类方法时输入参数可以被放大 class Father { public Collection doSomething(HashMap hashMap){ System.out.println(&#34;父类被执行。。。&#34;); return hashMap.values(); } } class Son extends Father{ public Collection doSomething(Map map){ System.out.println(&#34;子类被执行。。。&#34;); return map.values(); } } public class Client{ public static void main(String[] args) { invoker(); } public static void invoker(){ // Father f=new Father();  Son f = new Son(); HashMap hashMap= new HashMap&lt;&gt;(); f.doSomething(hashMap); } } 这里发生了一个现象，不论是f是Father类型还是Son类型，结果输出都是 “父类被执行。。。”"/>
+
+    <meta property="og:title" content="设计模式（设计模式之禅）" />
+<meta property="og:description" content="设计模式（设计模式之禅）  1.六大原责 1.1单一职责原则 1.2里氏替换原则 定义：
+ 1）如果对每一个类型为S的对象o1，都有类型为T的对 象o2，使得以T定义的所有程序P在所有的对象o1都代换成o2时，程序P的行为没有发生变 化，那么类型S是类型T的子类型。
+2）所有引用基类的地方必须能透明地使用其子类的对象
+ 简单来说，只要是父类能出现的地方，子类就能出现，且不会出现任何异常和错误，反过来不一定成立。
+覆盖或实现父类方法时输入参数可以被放大 class Father { public Collection doSomething(HashMap hashMap){ System.out.println(&#34;父类被执行。。。&#34;); return hashMap.values(); } } class Son extends Father{ public Collection doSomething(Map map){ System.out.println(&#34;子类被执行。。。&#34;); return map.values(); } } public class Client{ public static void main(String[] args) { invoker(); } public static void invoker(){ // Father f=new Father();  Son f = new Son(); HashMap hashMap= new HashMap&lt;&gt;(); f.doSomething(hashMap); } } 这里发生了一个现象，不论是f是Father类型还是Son类型，结果输出都是 “父类被执行。。。”" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://theemperoryao.github.io/post/blog/" />
+<meta property="article:published_time" content="2020-03-21T23:29:33+08:00" />
+<meta property="article:modified_time" content="2020-03-21T23:29:33+08:00" />
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://theemperoryao.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="John Doe" /></a>
+      <h1>My New Hugo Site</h1>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vehicula turpis sit amet elit pretium.</p>
+      <div class="app-header-social">
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">设计模式（设计模式之禅）</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Mar 21, 2020
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          1 min read
+        </div></div>
+    </header>
+    <div class="post-content">
+      <h3 id="设计模式设计模式之禅">设计模式（设计模式之禅）</h3>
+<hr>
+<h4 id="1六大原责">1.六大原责</h4>
+<h5 id="11单一职责原则">1.1单一职责原则</h5>
+<h5 id="12里氏替换原则">1.2里氏替换原则</h5>
+<p>定义：</p>
+<blockquote>
+<p>1）如果对每一个类型为S的对象o1，都有类型为T的对 象o2，使得以T定义的所有程序P在所有的对象o1都代换成o2时，程序P的行为没有发生变 化，那么类型S是类型T的子类型。</p>
+<p>2）所有引用基类的地方必须能透明地使用其子类的对象</p>
+</blockquote>
+<p>简单来说，只要是父类能出现的地方，子类就能出现，且不会出现任何异常和错误，反过来不一定成立。</p>
+<h6 id="覆盖或实现父类方法时输入参数可以被放大">覆盖或实现父类方法时输入参数可以被放大</h6>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Father</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> Collection <span style="color:#a6e22e">doSomething</span><span style="color:#f92672">(</span>HashMap hashMap<span style="color:#f92672">){</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;父类被执行。。。&#34;</span><span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> hashMap<span style="color:#f92672">.</span><span style="color:#a6e22e">values</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Son</span> <span style="color:#66d9ef">extends</span> Father<span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> Collection <span style="color:#a6e22e">doSomething</span><span style="color:#f92672">(</span>Map map<span style="color:#f92672">){</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;子类被执行。。。&#34;</span><span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> map<span style="color:#f92672">.</span><span style="color:#a6e22e">values</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Client</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        invoker<span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">invoker</span><span style="color:#f92672">(){</span>
+<span style="color:#75715e">//        Father f=new Father();
+</span><span style="color:#75715e"></span>        Son f <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Son<span style="color:#f92672">();</span>
+        HashMap hashMap<span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> HashMap<span style="color:#f92672">&lt;&gt;();</span>
+        f<span style="color:#f92672">.</span><span style="color:#a6e22e">doSomething</span><span style="color:#f92672">(</span>hashMap<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>这里发生了一个现象，不论是f是Father类型还是Son类型，结果输出都是  “父类被执行。。。”</p>
+<p><strong>出现这样的原因是，子类的doSomething是对父类doSomething的重载并不是重写（参数范围变大了），实际Son类型的f执行的是从父类继承过来的doSomething方法</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Father</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> Collection <span style="color:#a6e22e">doSomething</span><span style="color:#f92672">(</span>Map map<span style="color:#f92672">){</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;父类被执行。。。&#34;</span><span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> map<span style="color:#f92672">.</span><span style="color:#a6e22e">values</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Son</span> <span style="color:#66d9ef">extends</span> Father<span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> Collection <span style="color:#a6e22e">doSomething</span><span style="color:#f92672">(</span>HashMap map<span style="color:#f92672">){</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;子类被执行。。。&#34;</span><span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> map<span style="color:#f92672">.</span><span style="color:#a6e22e">values</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Client</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        invoker<span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">invoker</span><span style="color:#f92672">(){</span>
+<span style="color:#75715e">//        Father f=new Father();
+</span><span style="color:#75715e"></span>        Son f <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Son<span style="color:#f92672">();</span>
+        HashMap hashMap<span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> HashMap<span style="color:#f92672">&lt;&gt;();</span>
+        f<span style="color:#f92672">.</span><span style="color:#a6e22e">doSomething</span><span style="color:#f92672">(</span>hashMap<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p><strong>如果Father类的输入参数类型宽于子类的输入参数类型，会出现什么问题？</strong></p>
+<p>f是Father类型时，输出 &ldquo;父类被执行。。。&rdquo;</p>
+<p>根据里氏替换原则，有父类的地方子类就可以使用</p>
+<p>f是Son类型时，输出 &ldquo;子类被执行。。。&rdquo;</p>
+<p><strong>这是非常可怕的，子类在没有重写父类的方法情况下，子类方法被执行了（本来打算执行从父类继承过来的doSomething方法，可是子类中存在一个doSomething重载方法），==所以子类方法的前置条件必须与超类中被重写的方法的前置条件相同或者更宽松。==</strong></p>
+<h6 id="重写或者实现父类的方法时输出结果可以被缩小">重写或者实现父类的方法时输出结果可以被缩小</h6>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

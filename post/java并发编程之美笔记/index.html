@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Java并发编程之美摘要总结 // My New Hugo Site</title>
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.67.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="John Doe" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://theemperoryao.github.io/css/main.min.f90f5edd436ec7b74ad05479a05705770306911f721193e7845948fb07fe1335.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Java并发编程之美摘要总结"/>
+<meta name="twitter:description" content="Java并发编程之美摘要总结 第一章 并发编程基础 1.1 什么是线程  线程是进程中的一个实体。 进程是代码在数据集合上的一次运行活动，是系统进行资源分配和调度的基本单位，线程则是进程的一个执行路径，进程中多个线程共享进程的资源。 真正占用CPU执行的是线程，也就是说线程是CPU分配的基本单位。 启动main函数时，就是启动一个JVM进程，main函数所在线程(在这个进程中)叫做主线程。  进程和线程的关系  多个线程共享进程的堆和方法的资源 但是每个线程有自己的程序计数器和栈区域 ==程序计数器是一块内存区域，记录当前线程要执行的指令地址==  为何要将程序计数器设计为线程私有呢？  线程是占用CPU的执行单位，而CPU 一般是使用时间片轮转的方式让线程轮询占用,所以当前的线程CPU时间片用完之后，要让出CPU，等下次轮到自己的时候再执行。
+程序计数器就是为了记录该线程让出CPU时的执行地址的，待再次分配到时间片时线程就可以从自己的私有的计数器指定地址继续执行。
+需要注意的是，如果执行的是native方法，那么pc计数器记录的是undefined地址，只有执行的是java代码时，pc计数器记录的才是下一条指令的地址。
+  每个线程都有自己的栈资源，用于存储该线程的局部变量，栈还用来存放线程的调用栈帧 堆是进程中最大的一块内存，存放使用new操作创建的对象实例 方法区则是用来存放JVM加载的类，常量，静态变量等信息  1.2 线程的创建与运行  三种方式创建    继承Thread类并重写run方法
+  实现Runnable接口的run方法
+  使用FuntureTask方法（着重分析一下这种）   public class CallerTask implements Callable {public static void main(String[] args) throws ExecutionException, InterruptedException {FutureTask&lt;String&gt; futureTask = new FutureTask&lt;&gt;(new CallerTask());new Thread(futureTask).start();String result = futureTask."/>
+
+    <meta property="og:title" content="Java并发编程之美摘要总结" />
+<meta property="og:description" content="Java并发编程之美摘要总结 第一章 并发编程基础 1.1 什么是线程  线程是进程中的一个实体。 进程是代码在数据集合上的一次运行活动，是系统进行资源分配和调度的基本单位，线程则是进程的一个执行路径，进程中多个线程共享进程的资源。 真正占用CPU执行的是线程，也就是说线程是CPU分配的基本单位。 启动main函数时，就是启动一个JVM进程，main函数所在线程(在这个进程中)叫做主线程。  进程和线程的关系  多个线程共享进程的堆和方法的资源 但是每个线程有自己的程序计数器和栈区域 ==程序计数器是一块内存区域，记录当前线程要执行的指令地址==  为何要将程序计数器设计为线程私有呢？  线程是占用CPU的执行单位，而CPU 一般是使用时间片轮转的方式让线程轮询占用,所以当前的线程CPU时间片用完之后，要让出CPU，等下次轮到自己的时候再执行。
+程序计数器就是为了记录该线程让出CPU时的执行地址的，待再次分配到时间片时线程就可以从自己的私有的计数器指定地址继续执行。
+需要注意的是，如果执行的是native方法，那么pc计数器记录的是undefined地址，只有执行的是java代码时，pc计数器记录的才是下一条指令的地址。
+  每个线程都有自己的栈资源，用于存储该线程的局部变量，栈还用来存放线程的调用栈帧 堆是进程中最大的一块内存，存放使用new操作创建的对象实例 方法区则是用来存放JVM加载的类，常量，静态变量等信息  1.2 线程的创建与运行  三种方式创建    继承Thread类并重写run方法
+  实现Runnable接口的run方法
+  使用FuntureTask方法（着重分析一下这种）   public class CallerTask implements Callable {public static void main(String[] args) throws ExecutionException, InterruptedException {FutureTask&lt;String&gt; futureTask = new FutureTask&lt;&gt;(new CallerTask());new Thread(futureTask).start();String result = futureTask." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://theemperoryao.github.io/post/java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BE%8E%E7%AC%94%E8%AE%B0/" />
+<meta property="article:published_time" content="2020-03-22T00:30:18+08:00" />
+<meta property="article:modified_time" content="2020-03-22T00:30:18+08:00" />
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://theemperoryao.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="John Doe" /></a>
+      <h1>My New Hugo Site</h1>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vehicula turpis sit amet elit pretium.</p>
+      <div class="app-header-social">
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Java并发编程之美摘要总结</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Mar 22, 2020
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          1 min read
+        </div></div>
+    </header>
+    <div class="post-content">
+      <h2 id="java并发编程之美摘要总结">Java并发编程之美摘要总结</h2>
+<h4 id="第一章--并发编程基础">第一章  并发编程基础</h4>
+<h4 id="11-什么是线程">1.1 什么是线程</h4>
+<ul>
+<li>线程是进程中的一个实体。</li>
+<li>进程是代码在数据集合上的一次运行活动，是<strong>系统进行资源分配和调度的基本单位</strong>，<strong>线程则是进程的一个执行路径</strong>，进程中多个线程共享进程的资源。</li>
+<li>真正占用CPU执行的是线程，也就是说线程是CPU分配的基本单位。</li>
+<li>启动main函数时，就是启动一个JVM进程，main函数所在线程(在这个进程中)叫做主线程。</li>
+</ul>
+<h5 id="进程和线程的关系">进程和线程的关系</h5>
+<p><img src="http://static.jiebianjia.com/typora/0eb796c40079c4ade17328e1a3e62880.png" alt="1576234199455"></p>
+<ul>
+<li><em><strong>多个线程共享进程的堆和方法的资源</strong></em></li>
+<li><em><strong>但是每个线程有自己的程序计数器和栈区域</strong></em></li>
+<li>==<em><strong>程序计数器是一块内存区域，记录当前线程要执行的指令地址</strong></em>==</li>
+</ul>
+<h5 id="为何要将程序计数器设计为线程私有呢">为何要将程序计数器设计为线程私有呢？</h5>
+<blockquote>
+<p><strong>线程是占用CPU的执行单位，而CPU 一般是使用时间片轮转的方式让线程轮询占用,所以当前的线程CPU时间片用完之后，要让出CPU，等下次轮到自己的时候再执行。</strong></p>
+<p><strong>程序计数器就是为了记录该线程让出CPU时的执行地址的，待再次分配到时间片时线程就可以从自己的私有的计数器指定地址继续执行。</strong></p>
+<p><strong>需要注意的是，如果执行的是native方法，那么pc计数器记录的是undefined地址，只有执行的是java代码时，pc计数器记录的才是下一条指令的地址。</strong></p>
+</blockquote>
+<ul>
+<li>每个线程都有自己的<strong>栈</strong>资源，用于存储该线程的<strong>局部变量</strong>，栈还用来存放线程的<strong>调用栈帧</strong></li>
+<li>堆是进程中最大的一块内存，存放使用<strong>new操作</strong>创建的对象实例</li>
+<li>方法区则是用来存放<strong>JVM加载的类，常量，静态变量</strong>等信息</li>
+</ul>
+<h4 id="12--线程的创建与运行">1.2  线程的创建与运行</h4>
+<ul>
+<li><strong>三种方式创建</strong></li>
+</ul>
+<ol>
+<li>
+<p>继承Thread类并重写run方法</p>
+</li>
+<li>
+<p>实现Runnable接口的run方法</p>
+</li>
+<li>
+<h4 id="使用funturetask方法着重分析一下这种">使用FuntureTask方法（着重分析一下这种）</h4>
+</li>
+</ol>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CallerTask</span> <span style="color:#66d9ef">implements</span> Callable <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> ExecutionException<span style="color:#f92672">,</span> InterruptedException <span style="color:#f92672">{</span>
+        FutureTask<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> futureTask <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FutureTask<span style="color:#f92672">&lt;&gt;(</span><span style="color:#66d9ef">new</span> CallerTask<span style="color:#f92672">());</span>
+        <span style="color:#66d9ef">new</span> Thread<span style="color:#f92672">(</span>futureTask<span style="color:#f92672">).</span><span style="color:#a6e22e">start</span><span style="color:#f92672">();</span>
+        String result <span style="color:#f92672">=</span> futureTask<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">();</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>result<span style="color:#f92672">);</span>
+        
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> Object <span style="color:#a6e22e">call</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;hello&#34;</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p><img src="http://static.jiebianjia.com/typora/f36dfb9df056f5d68cbb2f163e5bbf33.png" alt="1576412781295"></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#a6e22e">FutureTask</span><span style="color:#f92672">(</span>Callable<span style="color:#f92672">&lt;</span>V<span style="color:#f92672">&gt;</span> callable<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>callable <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> NullPointerException<span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">callable</span> <span style="color:#f92672">=</span> callable<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">state</span> <span style="color:#f92672">=</span> NEW<span style="color:#f92672">;</span>       <span style="color:#75715e">// ensure visibility of callable
+</span><span style="color:#75715e"></span><span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@FunctionalInterface</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Callable</span><span style="color:#f92672">&lt;</span>V<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * Computes a result, or throws an exception if unable to do so.
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @return computed result
+</span><span style="color:#75715e">     * @throws Exception if unable to compute a result
+</span><span style="color:#75715e">     */</span>
+    V <span style="color:#a6e22e">call</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> Exception<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><blockquote>
+<p><strong>CallTask</strong>实现了<strong>Callable</strong>接口的<strong>call</strong>方法，在main函数里创建了一个<strong>FutureTask</strong>对象，（构造函数为CallTask实例，也就是接口Callable实现类CallTask的实例），然后使用创建的<strong>FutureTask</strong>对象<strong>作为任务</strong>创建啦一个线程并且启动它，最后通过futureTask.get等待任务执行完毕后返回结果。</p>
+</blockquote>
+<p>个人理解：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Thread</span> <span style="color:#66d9ef">implements</span> Runnable <span style="color:#f92672">{</span>
+   <span style="color:#f92672">...</span>
+  
+<span style="color:#a6e22e">@Override</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">run</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>target <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        target<span style="color:#f92672">.</span><span style="color:#a6e22e">run</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>Thread是实现了Runnable接口并重写了run方法，如果实现Runnable接口的run方法创建线程，那么会执行Runnable接口的run方法，否则要是继承Thread类并重写run方法，则执行后者。</p>
+<p>而FatureTask又是Runnable的实现类，自然重写了run方法，而FatureTask构造函数需要Callable接口作为参数</p>
+<p>那就创建一个Callable实例就好啦。</p>
+<p>而且因为Java不支持多继承，所以继承的方法弊端是不能继承其他类啦，而通过Runnable接口实例为构造器参数，被称为<strong>组合</strong>，<strong>组合相对于继承来说，耦合度更低</strong>，所以优先使用。</p>
+<p>可是前两者都不能拿到任务返回结果，但是<strong>FutureTask</strong>可以。</p>
+<h4 id="13--线程的等待和通知">1.3  线程的等待和通知</h4>
+<h5 id="1wait--函数">1.wait()  函数</h5>
+<p>当一个线程调用一个共享变量wait() 方法时，改调用线程会被阻塞挂起</p>
+<p>满足以下条件才返回</p>
+<p>（1）该线程调用了该共享对象的<strong>notify()<strong>方法或者</strong>notifyAll()</strong> 方法</p>
+<p>（2）其他线程调用了该线程的<strong>interrupt()<strong>方法，该线程抛出</strong>InterruptedException</strong>异常返回</p>
+<p><strong>虚假唤醒</strong>：一个线程  <strong>挂起- - &gt;  可运行状态（被唤醒）</strong> 即使没满足以上条件。</p>
+<p>需要不断用**wait()**方法去测试被唤醒条件是否满足，不满足继续等待。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">synchronized</span> <span style="color:#f92672">(</span>obj<span style="color:#f92672">){</span>
+	<span style="color:#66d9ef">while</span><span style="color:#f92672">(</span>条件不满足<span style="color:#f92672">){</span>
+		obj<span style="color:#f92672">.</span><span style="color:#a6e22e">wait</span><span style="color:#f92672">;</span>
+	<span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div>
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

@@ -1,0 +1,1251 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>深入理解JDK8 // My New Hugo Site</title>
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.67.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="John Doe" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://theemperoryao.github.io/css/main.min.f90f5edd436ec7b74ad05479a05705770306911f721193e7845948fb07fe1335.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="深入理解JDK8"/>
+<meta name="twitter:description" content="JDK8 1.Grande介绍 .Grandle/Maven:目录结构一样的，约定优于配置
+源代码:src/main/java
+配置文件:src/main/resources
+测试代码：src/text/java
+测试配置文件：src/text/resources
+页面相关:src/main/webapp
+setting.gradle:项目名字
+build.gradle:项目的描述，类似于pom.xml，包括项目所依赖的信息
+sourceCompatibility = 1.8//源代码兼容性targetCompatibility = 1.8//编译后代码兼容性dependencies {// testCompile group: &#39;junit&#39;, name: &#39;junit&#39;, version: &#39;4.12&#39;testCompile(&quot;junit:junit:4.11&quot;)}2.Lambda表达式基本格式 (param1,param2,param3)-&gt;{
+}
+package com.tang.jdk8;import javax.swing.*;import java.awt.event.ActionEvent;import java.awt.event.ActionListener;public class SwingTest {public static void main(String[] args) {JFrame jFrame = new JFrame(&#34;My JFrame&#34;);JButton jButton = new JButton(&#34;My JButton&#34;);//按按钮之后会自动调用方法 //java为静态类型语言，e为类型推断后结果， jButton.addActionListener(e -&gt; System.out.println(&#34;Button Pressed！&#34;));jFrame."/>
+
+    <meta property="og:title" content="深入理解JDK8" />
+<meta property="og:description" content="JDK8 1.Grande介绍 .Grandle/Maven:目录结构一样的，约定优于配置
+源代码:src/main/java
+配置文件:src/main/resources
+测试代码：src/text/java
+测试配置文件：src/text/resources
+页面相关:src/main/webapp
+setting.gradle:项目名字
+build.gradle:项目的描述，类似于pom.xml，包括项目所依赖的信息
+sourceCompatibility = 1.8//源代码兼容性targetCompatibility = 1.8//编译后代码兼容性dependencies {// testCompile group: &#39;junit&#39;, name: &#39;junit&#39;, version: &#39;4.12&#39;testCompile(&quot;junit:junit:4.11&quot;)}2.Lambda表达式基本格式 (param1,param2,param3)-&gt;{
+}
+package com.tang.jdk8;import javax.swing.*;import java.awt.event.ActionEvent;import java.awt.event.ActionListener;public class SwingTest {public static void main(String[] args) {JFrame jFrame = new JFrame(&#34;My JFrame&#34;);JButton jButton = new JButton(&#34;My JButton&#34;);//按按钮之后会自动调用方法 //java为静态类型语言，e为类型推断后结果， jButton.addActionListener(e -&gt; System.out.println(&#34;Button Pressed！&#34;));jFrame." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://theemperoryao.github.io/post/jdk8-/" />
+<meta property="article:published_time" content="2020-03-22T00:30:18+08:00" />
+<meta property="article:modified_time" content="2020-03-22T00:30:18+08:00" />
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://theemperoryao.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="John Doe" /></a>
+      <h1>My New Hugo Site</h1>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vehicula turpis sit amet elit pretium.</p>
+      <div class="app-header-social">
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">深入理解JDK8</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Mar 22, 2020
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          19 min read
+        </div></div>
+    </header>
+    <div class="post-content">
+      <h1 id="jdk8">JDK8</h1>
+<h4 id="1grande介绍">1.Grande介绍</h4>
+<p>.Grandle/Maven:目录结构一样的，约定优于配置</p>
+<p>源代码:src/main/java</p>
+<p>配置文件:src/main/resources</p>
+<p>测试代码：src/text/java</p>
+<p>测试配置文件：src/text/resources</p>
+<p>页面相关:src/main/webapp</p>
+<p>setting.gradle:项目名字</p>
+<p>build.gradle:项目的描述，类似于pom.xml，包括项目所依赖的信息</p>
+<pre><code>sourceCompatibility = 1.8//源代码兼容性
+targetCompatibility = 1.8//编译后代码兼容性
+</code></pre><pre><code>dependencies {
+//    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile(
+            &quot;junit:junit:4.11&quot;
+    )
+}
+</code></pre><h4 id="2lambda表达式基本格式">2.Lambda表达式基本格式</h4>
+<p>(param1,param2,param3)-&gt;{</p>
+<p>}</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> com.tang.jdk8<span style="color:#f92672">;</span>
+
+<span style="color:#f92672">import</span> javax.swing.*<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> java.awt.event.ActionEvent<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> java.awt.event.ActionListener<span style="color:#f92672">;</span>
+
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SwingTest</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        JFrame jFrame <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> JFrame<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;My JFrame&#34;</span><span style="color:#f92672">);</span>
+        JButton jButton <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> JButton<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;My JButton&#34;</span><span style="color:#f92672">);</span>
+
+        <span style="color:#75715e">//按按钮之后会自动调用方法
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//java为静态类型语言，e为类型推断后结果，
+</span><span style="color:#75715e"></span>        jButton<span style="color:#f92672">.</span><span style="color:#a6e22e">addActionListener</span><span style="color:#f92672">(</span>e <span style="color:#f92672">-&gt;</span> System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Button Pressed！&#34;</span><span style="color:#f92672">));</span>
+        jFrame<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>jButton<span style="color:#f92672">);</span>
+        <span style="color:#75715e">//正好是主键的大小
+</span><span style="color:#75715e"></span>        jFrame<span style="color:#f92672">.</span><span style="color:#a6e22e">pack</span><span style="color:#f92672">();</span>
+        jFrame<span style="color:#f92672">.</span><span style="color:#a6e22e">setVisible</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+        <span style="color:#75715e">//关闭的时候整个程序退出
+</span><span style="color:#75715e"></span>        jFrame<span style="color:#f92672">.</span><span style="color:#a6e22e">setDefaultCloseOperation</span><span style="color:#f92672">(</span>JFrame<span style="color:#f92672">.</span><span style="color:#a6e22e">EXIT_ON_CLOSE</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h4 id="3functionalinterface">3.@FunctionalInterface</h4>
+<pre><code>package java.util.function;
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@FunctionalInterface</span>
+<span style="color:#75715e">/*An informative annotation type used to indicate that an interface
+</span><span style="color:#75715e"> * type declaration is intended to be a &lt;i&gt;functional interface&lt;/i&gt; as
+</span><span style="color:#75715e"> * defined by the Java Language Specification.
+</span><span style="color:#75715e"> ......
+</span><span style="color:#75715e"> 
+</span><span style="color:#75715e"> *&lt;p&gt;Note that instances of functional interfaces can be created with
+</span><span style="color:#75715e"> * lambda expressions, method references, or constructor references.
+</span><span style="color:#75715e"> */</span>
+</code></pre></div><p><strong>1.函数式接口：如果一个接口只有一个抽象方法,那么他就是函数式接口。</strong></p>
+<p><strong>2.如果我们在某个接口上声明了@FunctionalInterface注解，那么编译器就按照函数式接口的定义来要求该接口。</strong></p>
+<p><strong>3.如果某个接口只有一个抽象方法,但我们没有给该接口声明，@FunctionalInterface注解，那么编译器依旧会将该接口看做函数式接口。</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/*If an interface declares an abstract method overriding one of the
+</span><span style="color:#75715e">* public methods of {@code java.lang.Object}, that also does
+</span><span style="color:#75715e">* &lt;em&gt;not&lt;/em&gt; count toward the interface&#39;s abstract method count
+</span><span style="color:#75715e">* since any implementation of the interface will have an
+</span><span style="color:#75715e">* implementation from {@code java.lang.Object} or elsewhere.
+</span><span style="color:#75715e">*/</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@FunctionalInterface</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">MyInterface</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test</span><span style="color:#f92672">();</span>
+    
+    String <span style="color:#a6e22e">isString</span><span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>==Multiple non-overriding abstract methods found in interface com.tang.jdk8.MyInterface==</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@FunctionalInterface</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">MyInterface</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test</span><span style="color:#f92672">();</span> 
+    
+    <span style="color:#a6e22e">@Override</span>
+    String <span style="color:#a6e22e">toString</span><span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>====toString 为Object类下的public方法，所以注解不认为他会一个新的抽象方法，因为任何接口都要直接或者间接继承Object类,继承里面的所有方法，由Object去去实现这个方法，而子类只实现一个方法==</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@FunctionalInterface</span>
+<span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">MyInterface</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test</span><span style="color:#f92672">();</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    String <span style="color:#a6e22e">toString</span><span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Test2</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">myTest</span><span style="color:#f92672">(</span>MyInterface myInterface<span style="color:#f92672">){</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>1<span style="color:#f92672">);</span>
+        myInterface<span style="color:#f92672">.</span><span style="color:#a6e22e">test</span><span style="color:#f92672">();</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>2<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Test2 test2 <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Test2<span style="color:#f92672">();</span>
+
+        test2<span style="color:#f92672">.</span><span style="color:#a6e22e">myTest</span><span style="color:#f92672">(()-&gt;</span> System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;mytest&#34;</span><span style="color:#f92672">));</span>
+
+        MyInterface myInterface<span style="color:#f92672">=()-&gt;</span> System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;hello&#34;</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>myInterface<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">());</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>myInterface<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getSuperclass</span><span style="color:#f92672">());</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>myInterface<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getInterfaces</span><span style="color:#f92672">().</span><span style="color:#a6e22e">length</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>myInterface<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getInterfaces</span><span style="color:#f92672">()[</span>0<span style="color:#f92672">]);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+1
+mytest
+2
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">com</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">jdk8</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Test2$$Lambda$2</span><span style="color:#f92672">/</span>1078694789
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">java</span><span style="color:#f92672">.</span><span style="color:#a6e22e">lang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Object</span> 
+1
+<span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">com</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">jdk8</span><span style="color:#f92672">.</span><span style="color:#a6e22e">MyInterface</span>
+</code></pre></div><h4 id="4foreach">4.forEach</h4>
+<pre><code>List extends Collection extends Iterable
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Iterable</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+ 
+    Iterator<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">iterator</span><span style="color:#f92672">();</span>
+    <span style="color:#75715e">/* Performs the given action for each element of the {@code Iterable}
+</span><span style="color:#75715e">     * until all elements have been processed or the action throws an
+</span><span style="color:#75715e">     * exception.  Unless otherwise specified by the implementing class,
+</span><span style="color:#75715e">     * actions are performed in the order of iteration (if an iteration order
+</span><span style="color:#75715e">     * is specified).  Exceptions thrown by the action are relayed to the
+</span><span style="color:#75715e">     * caller.
+</span><span style="color:#75715e">     * ...
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">default</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>Consumer<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">super</span> T<span style="color:#f92672">&gt;</span> action<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">requireNonNull</span><span style="color:#f92672">(</span>action<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>T t <span style="color:#f92672">:</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            action<span style="color:#f92672">.</span><span style="color:#a6e22e">accept</span><span style="color:#f92672">(</span>t<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">default</span> Spliterator<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">spliterator</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> Spliterators<span style="color:#f92672">.</span><span style="color:#a6e22e">spliteratorUnknownSize</span><span style="color:#f92672">(</span>iterator<span style="color:#f92672">(),</span> 0<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>所以list继承了Iterable接口，接口里有默认方法forEach</p>
+<p>函数式接口加入，保证了向下兼容</p>
+<h4 id="5comsumer">5.Comsumer</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> java.util.function<span style="color:#f92672">;</span>
+
+<span style="color:#f92672">import</span> java.util.Objects<span style="color:#f92672">;</span>
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e"> * Represents an operation that accepts a single input argument and returns no
+</span><span style="color:#75715e"> * result. Unlike most other functional interfaces, {@code Consumer} is expected
+</span><span style="color:#75715e"> * to operate via side-effects.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;p&gt;This is a &lt;a href=&#34;package-summary.html&#34;&gt;functional interface&lt;/a&gt;
+</span><span style="color:#75715e"> * whose functional method is {@link #accept(Object)}.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * @param &lt;T&gt; the type of the input to the operation
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * @since 1.8
+</span><span style="color:#75715e"> */</span>
+<span style="color:#a6e22e">@FunctionalInterface</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Consumer</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * Performs this operation on the given argument.
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @param t the input argument
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">accept</span><span style="color:#f92672">(</span>T t<span style="color:#f92672">);</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * Returns a composed {@code Consumer} that performs, in sequence, this
+</span><span style="color:#75715e">     * operation followed by the {@code after} operation. If performing either
+</span><span style="color:#75715e">     * operation throws an exception, it is relayed to the caller of the
+</span><span style="color:#75715e">     * composed operation.  If performing this operation throws an exception,
+</span><span style="color:#75715e">     * the {@code after} operation will not be performed.
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @param after the operation to perform after this operation
+</span><span style="color:#75715e">     * @return a composed {@code Consumer} that performs in sequence this
+</span><span style="color:#75715e">     * operation followed by the {@code after} operation
+</span><span style="color:#75715e">     * @throws NullPointerException if {@code after} is null
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">default</span> Consumer<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">andThen</span><span style="color:#f92672">(</span>Consumer<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">super</span> T<span style="color:#f92672">&gt;</span> after<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">requireNonNull</span><span style="color:#f92672">(</span>after<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>T t<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span> accept<span style="color:#f92672">(</span>t<span style="color:#f92672">);</span> after<span style="color:#f92672">.</span><span style="color:#a6e22e">accept</span><span style="color:#f92672">(</span>t<span style="color:#f92672">);</span> <span style="color:#f92672">};</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>在将函数作为一等公民的语言中，Lambda表达式是函数(Python)。但在java中，Lambda表达式是对象（如MyInterface myInterface=()-&gt; System.out.println(&ldquo;hello&rdquo;);），这就是把Lamada表达式赋值给一个对象），他们必须依附于一类特别的对象类型——函数式接口。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@FunctionalInterface</span>
+<span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">TheInterface</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">myMethod</span><span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
+<span style="color:#a6e22e">@FunctionalInterface</span>
+<span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">TheInterface2</span><span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">void</span> myMetho<span style="color:#f92672">=</span>d2<span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">TheInterface i1<span style="color:#f92672">=()-&gt;{</span> <span style="color:#f92672">};</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>i1<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getInterfaces</span><span style="color:#f92672">()[</span>0<span style="color:#f92672">]);</span>
+TheInterface2 i2 <span style="color:#f92672">=()-&gt;{};</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>i2<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getInterfaces</span><span style="color:#f92672">()[</span>0<span style="color:#f92672">]);</span>
+</code></pre></div><p>==()-&gt;{}是Lamada表达式，它必须有上下文，它只关心方法参数和返回类型（虽然方法名字实现对于接口很关键，但是对于Labmda表达式并不担心方法名字是什么）==</p>
+<h4 id="6方法引用粗略">6..方法引用（粗略）</h4>
+<p>通过方法引用的形式创建Lambda接口的实例</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">list<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>String<span style="color:#f92672">::</span>toUpperCase<span style="color:#f92672">).</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println<span style="color:#f92672">);</span>
+</code></pre></div><p>stream是单线程完成的，parallelStream是由多线程完成的。</p>
+<p>还可以分为中间流和结点流，中间流可以连续操作，结点流得到最终结果，不能再被操作</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">toUpperCase</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">return</span> toUpperCase<span style="color:#f92672">(</span>Locale<span style="color:#f92672">.</span><span style="color:#a6e22e">getDefault</span><span style="color:#f92672">());</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>==调用toUpperCase方法的当前对象作为输入（所有实例的实例方法，第一个参数都是隐式的this，也就是stream流中的每一个String对象）==</p>
+<p>==输出为执行完toUpperCase方法后的对象（也就是上面代码return的部分）==</p>
+<h4 id="7function">7..Function</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Function<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span>String<span style="color:#f92672">&gt;</span> function<span style="color:#f92672">=</span>String<span style="color:#f92672">::</span>toUpperCase<span style="color:#f92672">;</span>
+</code></pre></div><p>==不能写成String.toupperCase,因为toUpperCase不是静态方法==</p>
+<p>==<strong>如5所讲，一定会存在一个String的实例对象(假设为str)，去调用toUpperCase==</strong></p>
+<p><strong>总结：如果一个类类型，直接通过 :: 引用实例方法，对应Lambda表达式的第一个参数,就是调用这个方法的对象（this）</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> java.util.function<span style="color:#f92672">;</span>
+
+<span style="color:#f92672">import</span> java.util.Objects<span style="color:#f92672">;</span>
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e"> * Represents a function that accepts one argument and produces a result.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;p&gt;This is a &lt;a href=&#34;package-summary.html&#34;&gt;functional interface&lt;/a&gt;
+</span><span style="color:#75715e"> * whose functional method is {@link #apply(Object)}.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * @param &lt;T&gt; the type of the input to the function
+</span><span style="color:#75715e"> * @param &lt;R&gt; the type of the result of the function
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * @since 1.8
+</span><span style="color:#75715e"> */</span>
+<span style="color:#a6e22e">@FunctionalInterface</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Function</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">,</span> R<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * Applies this function to the given argument.
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @param t the function argument
+</span><span style="color:#75715e">     * @return the function result
+</span><span style="color:#75715e">     */</span>
+    R <span style="color:#a6e22e">apply</span><span style="color:#f92672">(</span>T t<span style="color:#f92672">);</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * Returns a composed function that first applies the {@code before}
+</span><span style="color:#75715e">     * function to its input, and then applies this function to the result.
+</span><span style="color:#75715e">     * If evaluation of either function throws an exception, it is relayed to
+</span><span style="color:#75715e">     * the caller of the composed function.
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @param &lt;V&gt; the type of input to the {@code before} function, and to the
+</span><span style="color:#75715e">     *           composed function
+</span><span style="color:#75715e">     * @param before the function to apply before this function is applied
+</span><span style="color:#75715e">     * @return a composed function that first applies the {@code before}
+</span><span style="color:#75715e">     * function and then applies this function
+</span><span style="color:#75715e">     * @throws NullPointerException if before is null
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @see #andThen(Function)
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">default</span> <span style="color:#f92672">&lt;</span>V<span style="color:#f92672">&gt;</span> Function<span style="color:#f92672">&lt;</span>V<span style="color:#f92672">,</span> R<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">compose</span><span style="color:#f92672">(</span>Function<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">super</span> V<span style="color:#f92672">,</span> <span style="color:#f92672">?</span> <span style="color:#66d9ef">extends</span> T<span style="color:#f92672">&gt;</span> before<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">requireNonNull</span><span style="color:#f92672">(</span>before<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>V v<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> apply<span style="color:#f92672">(</span>before<span style="color:#f92672">.</span><span style="color:#a6e22e">apply</span><span style="color:#f92672">(</span>v<span style="color:#f92672">));</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * Returns a composed function that first applies this function to
+</span><span style="color:#75715e">     * its input, and then applies the {@code after} function to the result.
+</span><span style="color:#75715e">     * If evaluation of either function throws an exception, it is relayed to
+</span><span style="color:#75715e">     * the caller of the composed function.
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @param &lt;V&gt; the type of output of the {@code after} function, and of the
+</span><span style="color:#75715e">     *           composed function
+</span><span style="color:#75715e">     * @param after the function to apply after this function is applied
+</span><span style="color:#75715e">     * @return a composed function that first applies this function and then
+</span><span style="color:#75715e">     * applies the {@code after} function
+</span><span style="color:#75715e">     * @throws NullPointerException if after is null
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @see #compose(Function)
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">default</span> <span style="color:#f92672">&lt;</span>V<span style="color:#f92672">&gt;</span> Function<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">,</span> V<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">andThen</span><span style="color:#f92672">(</span>Function<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">super</span> R<span style="color:#f92672">,</span> <span style="color:#f92672">?</span> <span style="color:#66d9ef">extends</span> V<span style="color:#f92672">&gt;</span> after<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">requireNonNull</span><span style="color:#f92672">(</span>after<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>T t<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> after<span style="color:#f92672">.</span><span style="color:#a6e22e">apply</span><span style="color:#f92672">(</span>apply<span style="color:#f92672">(</span>t<span style="color:#f92672">));</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * Returns a function that always returns its input argument.
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @param &lt;T&gt; the type of the input and output objects to the function
+</span><span style="color:#75715e">     * @return a function that always returns its input argument
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">static</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> Function<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">,</span> T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">identity</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> t <span style="color:#f92672">-&gt;</span> t<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FunctionTest</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        FunctionTest functionTest<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> FunctionTest<span style="color:#f92672">();</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>functionTest<span style="color:#f92672">.</span><span style="color:#a6e22e">compute</span><span style="color:#f92672">(</span>10<span style="color:#f92672">,</span> val<span style="color:#f92672">-&gt;</span>2<span style="color:#f92672">*</span>val<span style="color:#f92672">));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>functionTest<span style="color:#f92672">.</span><span style="color:#a6e22e">convert</span><span style="color:#f92672">(</span> 10<span style="color:#f92672">,</span> val<span style="color:#f92672">-&gt;</span>String<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>val<span style="color:#f92672">+</span><span style="color:#e6db74">&#34;你好&#34;</span><span style="color:#f92672">)));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>functionTest<span style="color:#f92672">.</span><span style="color:#a6e22e">convert</span><span style="color:#f92672">(</span> 10<span style="color:#f92672">,</span> val<span style="color:#f92672">-&gt;</span>Integer<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">(</span>val<span style="color:#f92672">)+</span><span style="color:#e6db74">&#34;hello&#34;</span><span style="color:#f92672">));</span>
+     	 System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>functionTest<span style="color:#f92672">.</span><span style="color:#a6e22e">method1</span><span style="color:#f92672">(</span>10<span style="color:#f92672">));</span>
+        
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">compute</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> a<span style="color:#f92672">,</span> Function<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">,</span>Integer<span style="color:#f92672">&gt;</span> function<span style="color:#f92672">){</span>
+        <span style="color:#66d9ef">int</span> result <span style="color:#f92672">=</span> function<span style="color:#f92672">.</span><span style="color:#a6e22e">apply</span><span style="color:#f92672">(</span>a<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> result<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">convert</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> a<span style="color:#f92672">,</span> Function<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">,</span>String<span style="color:#f92672">&gt;</span> function<span style="color:#f92672">){</span>
+        <span style="color:#66d9ef">return</span> function<span style="color:#f92672">.</span><span style="color:#a6e22e">apply</span><span style="color:#f92672">(</span>a<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">method1</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> a<span style="color:#f92672">){</span>
+        <span style="color:#66d9ef">return</span> a<span style="color:#f92672">*</span>a<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>==Integer &ndash;&gt;String  Integer.toString(a);  String.valueOf==</p>
+<p><strong>结论：Lambda表达式传递的是行为，以前是行为提前定义好，调用行为</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">default</span> <span style="color:#f92672">&lt;</span>V<span style="color:#f92672">&gt;</span> Function<span style="color:#f92672">&lt;</span>V<span style="color:#f92672">,</span> R<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">compose</span><span style="color:#f92672">(</span>Function<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">super</span> V<span style="color:#f92672">,</span> <span style="color:#f92672">?</span> <span style="color:#66d9ef">extends</span> T<span style="color:#f92672">&gt;</span> before<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">requireNonNull</span><span style="color:#f92672">(</span>before<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>V v<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> apply<span style="color:#f92672">(</span>before<span style="color:#f92672">.</span><span style="color:#a6e22e">apply</span><span style="color:#f92672">(</span>v<span style="color:#f92672">));</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">default</span> <span style="color:#f92672">&lt;</span>V<span style="color:#f92672">&gt;</span> Function<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">,</span> V<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">andThen</span><span style="color:#f92672">(</span>Function<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">super</span> R<span style="color:#f92672">,</span> <span style="color:#f92672">?</span> <span style="color:#66d9ef">extends</span> V<span style="color:#f92672">&gt;</span> after<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">requireNonNull</span><span style="color:#f92672">(</span>after<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>T t<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> after<span style="color:#f92672">.</span><span style="color:#a6e22e">apply</span><span style="color:#f92672">(</span>apply<span style="color:#f92672">(</span>t<span style="color:#f92672">));</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p><strong>区别:</strong></p>
+<p><strong>compose :先调用参数接口执行apply()方法，得到的结果作为参数再执行apply()方法</strong></p>
+<p><strong>andThen:先调用本接口内的apply()方法，得到的接口再调用参数的apply接口的apply()方法</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FunctionTest2</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        FunctionTest2 functionTest2 <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FunctionTest2<span style="color:#f92672">();</span>
+        <span style="color:#75715e">//4
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">int</span> compute <span style="color:#f92672">=</span> functionTest2<span style="color:#f92672">.</span><span style="color:#a6e22e">compute</span><span style="color:#f92672">(</span>1<span style="color:#f92672">,</span> val <span style="color:#f92672">-&gt;</span> val <span style="color:#f92672">*</span> val<span style="color:#f92672">,</span> val <span style="color:#f92672">-&gt;</span> val <span style="color:#f92672">+</span> 1<span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;compute = &#34;</span> <span style="color:#f92672">+</span> compute<span style="color:#f92672">);</span>
+        <span style="color:#75715e">//2
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">int</span> compute2 <span style="color:#f92672">=</span> functionTest2<span style="color:#f92672">.</span><span style="color:#a6e22e">compute2</span><span style="color:#f92672">(</span>1<span style="color:#f92672">,</span> val <span style="color:#f92672">-&gt;</span> val <span style="color:#f92672">*</span> val<span style="color:#f92672">,</span> val <span style="color:#f92672">-&gt;</span> val <span style="color:#f92672">+</span> 1<span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;compute2 = &#34;</span> <span style="color:#f92672">+</span> compute2<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">compute</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> a<span style="color:#f92672">,</span>Function<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">,</span>Integer<span style="color:#f92672">&gt;</span> function1<span style="color:#f92672">,</span>Function<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">,</span>Integer<span style="color:#f92672">&gt;</span> function2<span style="color:#f92672">){</span>
+        <span style="color:#66d9ef">return</span> function1<span style="color:#f92672">.</span><span style="color:#a6e22e">compose</span><span style="color:#f92672">(</span>function2<span style="color:#f92672">).</span><span style="color:#a6e22e">apply</span><span style="color:#f92672">(</span>a<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">compute2</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> a<span style="color:#f92672">,</span>Function<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">,</span>Integer<span style="color:#f92672">&gt;</span> function1<span style="color:#f92672">,</span>Function<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">,</span>Integer<span style="color:#f92672">&gt;</span> function2<span style="color:#f92672">){</span>
+        <span style="color:#66d9ef">return</span> function1<span style="color:#f92672">.</span><span style="color:#a6e22e">andThen</span><span style="color:#f92672">(</span>function2<span style="color:#f92672">).</span><span style="color:#a6e22e">apply</span><span style="color:#f92672">(</span>a<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+compute <span style="color:#f92672">=</span> 4
+compute2 <span style="color:#f92672">=</span> 2
+</code></pre></div><p>先执行function2.apply()再把得到的结果作为参数执行function1.apply()</p>
+<h5 id="71高阶函数">7.1高阶函数</h5>
+<p>如果一个函数接收一个函数作为参数，或者返回一个函数作为返回值，那么该函数称为高阶函数。</p>
+<p>拓展：BiFuction</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@FunctionalInterface</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">BiFunction</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">,</span> U<span style="color:#f92672">,</span> R<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+
+    R <span style="color:#a6e22e">apply</span><span style="color:#f92672">(</span>T t<span style="color:#f92672">,</span> U u<span style="color:#f92672">);</span>
+
+    <span style="color:#66d9ef">default</span> <span style="color:#f92672">&lt;</span>V<span style="color:#f92672">&gt;</span> BiFunction<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">,</span> U<span style="color:#f92672">,</span> V<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">andThen</span><span style="color:#f92672">(</span>Function<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">super</span> R<span style="color:#f92672">,</span> <span style="color:#f92672">?</span> <span style="color:#66d9ef">extends</span> V<span style="color:#f92672">&gt;</span> after<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">requireNonNull</span><span style="color:#f92672">(</span>after<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>T t<span style="color:#f92672">,</span> U u<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> after<span style="color:#f92672">.</span><span style="color:#a6e22e">apply</span><span style="color:#f92672">(</span>apply<span style="color:#f92672">(</span>t<span style="color:#f92672">,</span> u<span style="color:#f92672">));</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">compute4</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> a<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> b<span style="color:#f92672">,</span> BiFunction<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">,</span>Integer<span style="color:#f92672">,</span>Integer<span style="color:#f92672">&gt;</span> biFunction<span style="color:#f92672">,</span>Function<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">,</span>Integer<span style="color:#f92672">&gt;</span> function<span style="color:#f92672">){</span>
+    <span style="color:#66d9ef">return</span> biFunction<span style="color:#f92672">.</span><span style="color:#a6e22e">andThen</span><span style="color:#f92672">(</span>function<span style="color:#f92672">).</span><span style="color:#a6e22e">apply</span><span style="color:#f92672">(</span>a<span style="color:#f92672">,</span>b<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>compute4<span style="color:#f92672">(</span>10<span style="color:#f92672">,</span> 20<span style="color:#f92672">,</span> <span style="color:#f92672">(</span>val1<span style="color:#f92672">,</span> val2<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> val1 <span style="color:#f92672">+</span> val2<span style="color:#f92672">,</span> val <span style="color:#f92672">-&gt;</span> val <span style="color:#f92672">*</span> val<span style="color:#f92672">));</span>
+</code></pre></div><p>输出：900</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> List<span style="color:#f92672">&lt;</span>Person<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getPersonByAge2</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> age<span style="color:#f92672">,</span>List<span style="color:#f92672">&lt;</span>Person<span style="color:#f92672">&gt;</span> peoples<span style="color:#f92672">,</span>BiFunction<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">,</span>List<span style="color:#f92672">&lt;</span>Person<span style="color:#f92672">&gt;,</span>List<span style="color:#f92672">&lt;</span>Person<span style="color:#f92672">&gt;&gt;</span> biFunction<span style="color:#f92672">){</span>
+    <span style="color:#66d9ef">return</span> biFunction<span style="color:#f92672">.</span><span style="color:#a6e22e">apply</span><span style="color:#f92672">(</span>age<span style="color:#f92672">,</span> peoples<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">List<span style="color:#f92672">&lt;</span>Person<span style="color:#f92672">&gt;</span> personByAge2 <span style="color:#f92672">=</span> personTest<span style="color:#f92672">.</span><span style="color:#a6e22e">getPersonByAge2</span><span style="color:#f92672">(</span>20<span style="color:#f92672">,</span> peoples<span style="color:#f92672">,</span> <span style="color:#f92672">(</span>ageOfPerson<span style="color:#f92672">,</span> personList<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> personList<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">filter</span><span style="color:#f92672">(</span>p <span style="color:#f92672">-&gt;</span> p<span style="color:#f92672">.</span><span style="color:#a6e22e">getAge</span><span style="color:#f92672">()</span> <span style="color:#f92672">&gt;</span> 20<span style="color:#f92672">).</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">()));</span>
+personByAge2<span style="color:#f92672">.</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>p<span style="color:#f92672">-&gt;</span> System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>p<span style="color:#f92672">.</span><span style="color:#a6e22e">getAge</span><span style="color:#f92672">()));</span>
+</code></pre></div><p>21
+23</p>
+<h4 id="8predicate">8.Predicate</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">PredicateTest</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Predicate<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> predicate<span style="color:#f92672">=</span>p<span style="color:#f92672">-&gt;</span>p<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">()&gt;</span>5<span style="color:#f92672">;</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>predicate<span style="color:#f92672">.</span><span style="color:#a6e22e">test</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;hello&#34;</span><span style="color:#f92672">));</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>false</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> java.util.function<span style="color:#f92672">;</span>
+
+<span style="color:#f92672">import</span> java.util.Objects<span style="color:#f92672">;</span>
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e"> * Represents a predicate (boolean-valued function) of one argument.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;p&gt;This is a &lt;a href=&#34;package-summary.html&#34;&gt;functional interface&lt;/a&gt;
+</span><span style="color:#75715e"> * whose functional method is {@link #test(Object)}.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * @param &lt;T&gt; the type of the input to the predicate
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * @since 1.8
+</span><span style="color:#75715e"> */</span>
+<span style="color:#a6e22e">@FunctionalInterface</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Predicate</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * Evaluates this predicate on the given argument.
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @param t the input argument
+</span><span style="color:#75715e">     * @return {@code true} if the input argument matches the predicate,
+</span><span style="color:#75715e">     * otherwise {@code false}
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">test</span><span style="color:#f92672">(</span>T t<span style="color:#f92672">);</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * Returns a composed predicate that represents a short-circuiting logical
+</span><span style="color:#75715e">     * AND of this predicate and another.  When evaluating the composed
+</span><span style="color:#75715e">     * predicate, if this predicate is {@code false}, then the {@code other}
+</span><span style="color:#75715e">     * predicate is not evaluated.
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * &lt;p&gt;Any exceptions thrown during evaluation of either predicate are relayed
+</span><span style="color:#75715e">     * to the caller; if evaluation of this predicate throws an exception, the
+</span><span style="color:#75715e">     * {@code other} predicate will not be evaluated.
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @param other a predicate that will be logically-ANDed with this
+</span><span style="color:#75715e">     *              predicate
+</span><span style="color:#75715e">     * @return a composed predicate that represents the short-circuiting logical
+</span><span style="color:#75715e">     * AND of this predicate and the {@code other} predicate
+</span><span style="color:#75715e">     * @throws NullPointerException if other is null
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">default</span> Predicate<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">and</span><span style="color:#f92672">(</span>Predicate<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">super</span> T<span style="color:#f92672">&gt;</span> other<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">requireNonNull</span><span style="color:#f92672">(</span>other<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>t<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> test<span style="color:#f92672">(</span>t<span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span> other<span style="color:#f92672">.</span><span style="color:#a6e22e">test</span><span style="color:#f92672">(</span>t<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * Returns a predicate that represents the logical negation of this
+</span><span style="color:#75715e">     * predicate.
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @return a predicate that represents the logical negation of this
+</span><span style="color:#75715e">     * predicate
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">default</span> Predicate<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">negate</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>t<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">!</span>test<span style="color:#f92672">(</span>t<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * Returns a composed predicate that represents a short-circuiting logical
+</span><span style="color:#75715e">     * OR of this predicate and another.  When evaluating the composed
+</span><span style="color:#75715e">     * predicate, if this predicate is {@code true}, then the {@code other}
+</span><span style="color:#75715e">     * predicate is not evaluated.
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * &lt;p&gt;Any exceptions thrown during evaluation of either predicate are relayed
+</span><span style="color:#75715e">     * to the caller; if evaluation of this predicate throws an exception, the
+</span><span style="color:#75715e">     * {@code other} predicate will not be evaluated.
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @param other a predicate that will be logically-ORed with this
+</span><span style="color:#75715e">     *              predicate
+</span><span style="color:#75715e">     * @return a composed predicate that represents the short-circuiting logical
+</span><span style="color:#75715e">     * OR of this predicate and the {@code other} predicate
+</span><span style="color:#75715e">     * @throws NullPointerException if other is null
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">default</span> Predicate<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">or</span><span style="color:#f92672">(</span>Predicate<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">super</span> T<span style="color:#f92672">&gt;</span> other<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">requireNonNull</span><span style="color:#f92672">(</span>other<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>t<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> test<span style="color:#f92672">(</span>t<span style="color:#f92672">)</span> <span style="color:#f92672">||</span> other<span style="color:#f92672">.</span><span style="color:#a6e22e">test</span><span style="color:#f92672">(</span>t<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * Returns a predicate that tests if two arguments are equal according
+</span><span style="color:#75715e">     * to {@link Objects#equals(Object, Object)}.
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @param &lt;T&gt; the type of arguments to the predicate
+</span><span style="color:#75715e">     * @param targetRef the object reference with which to compare for equality,
+</span><span style="color:#75715e">     *               which may be {@code null}
+</span><span style="color:#75715e">     * @return a predicate that tests if two arguments are equal according
+</span><span style="color:#75715e">     * to {@link Objects#equals(Object, Object)}
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#75715e">//判断两个参数是否相等
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">static</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> Predicate<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">isEqual</span><span style="color:#f92672">(</span>Object targetRef<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">null</span> <span style="color:#f92672">==</span> targetRef<span style="color:#f92672">)</span>
+                <span style="color:#f92672">?</span> Objects<span style="color:#f92672">::</span>isNull<span style="color:#75715e">//返回相同签名即可，满足输入一个变量，返回boolean。编译器会认为这是一个predicate的实现
+</span><span style="color:#75715e"></span>                <span style="color:#f92672">:</span> object <span style="color:#f92672">-&gt;</span> targetRef<span style="color:#f92672">.</span><span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span>object<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">isNull</span><span style="color:#f92672">(</span>Object obj<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">return</span> obj <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span>Object obj<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">this</span> <span style="color:#f92672">==</span> obj<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h5 id="81面向对象和面向函数">8.1面向对象和面向函数</h5>
+<p><strong>面向对象传递一个参数（对象），方法体里面定义行为，处理业务逻辑</strong></p>
+<p><strong>函数式编程传递两个参数（对象+函数式接口），具体行为被调用者定义，在方法体里面没有具体表现（提供了更高层次的抽象化)</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> java.util.Arrays<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> java.util.Date<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> java.util.List<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> java.util.function.Predicate<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> java.util.stream.Collectors<span style="color:#f92672">;</span>
+
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">PredicateTest2</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> list <span style="color:#f92672">=</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span>1<span style="color:#f92672">,</span> 2<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> 4<span style="color:#f92672">,</span> 5<span style="color:#f92672">,</span> 6<span style="color:#f92672">,</span> 7<span style="color:#f92672">,</span> 8<span style="color:#f92672">,</span> 9<span style="color:#f92672">,</span> 10<span style="color:#f92672">);</span>
+
+        PredicateTest2 predicateTest2<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> PredicateTest2<span style="color:#f92672">();</span>
+        predicateTest2<span style="color:#f92672">.</span><span style="color:#a6e22e">conditionalFileter</span><span style="color:#f92672">(</span>list<span style="color:#f92672">,</span> num<span style="color:#f92672">-&gt;</span>num<span style="color:#f92672">%</span>2<span style="color:#f92672">!=</span>0<span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">();</span>
+        predicateTest2<span style="color:#f92672">.</span><span style="color:#a6e22e">conditionalFileter</span><span style="color:#f92672">(</span>list<span style="color:#f92672">,</span> num<span style="color:#f92672">-&gt;</span>num<span style="color:#f92672">%</span>2<span style="color:#f92672">==</span>0<span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">();</span>
+        predicateTest2<span style="color:#f92672">.</span><span style="color:#a6e22e">conditionalFileter</span><span style="color:#f92672">(</span>list<span style="color:#f92672">,</span> num<span style="color:#f92672">-&gt;</span>num<span style="color:#f92672">&gt;</span>5<span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">();</span>
+        predicateTest2<span style="color:#f92672">.</span><span style="color:#a6e22e">conditionalFileter</span><span style="color:#f92672">(</span>list<span style="color:#f92672">,</span> num<span style="color:#f92672">-&gt;</span>num<span style="color:#f92672">&lt;</span>3<span style="color:#f92672">);</span>
+        predicateTest2<span style="color:#f92672">.</span><span style="color:#a6e22e">conditionalFileter</span><span style="color:#f92672">(</span>list<span style="color:#f92672">,</span> num<span style="color:#f92672">-&gt;</span><span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">();</span>
+        predicateTest2<span style="color:#f92672">.</span><span style="color:#a6e22e">conditionalFileter2</span><span style="color:#f92672">(</span>list<span style="color:#f92672">,</span> num<span style="color:#f92672">-&gt;</span>num<span style="color:#f92672">&gt;</span>5<span style="color:#f92672">,</span>num<span style="color:#f92672">-&gt;</span>num<span style="color:#f92672">%</span>2<span style="color:#f92672">==</span>0<span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">();</span>
+        predicateTest2<span style="color:#f92672">.</span><span style="color:#a6e22e">conditionalFileter3</span><span style="color:#f92672">(</span>list<span style="color:#f92672">,</span> num<span style="color:#f92672">-&gt;</span>num<span style="color:#f92672">&gt;</span>5<span style="color:#f92672">,</span>num<span style="color:#f92672">-&gt;</span>num<span style="color:#f92672">%</span>2<span style="color:#f92672">==</span>0<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">boolean</span> test <span style="color:#f92672">=</span> predicateTest2<span style="color:#f92672">.</span><span style="color:#a6e22e">isEqual</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> Date<span style="color:#f92672">()).</span><span style="color:#a6e22e">test</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> Date<span style="color:#f92672">());</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>test<span style="color:#f92672">);</span>
+
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">//通用方法，具体行为使用者调用时自己定义并传递进去
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">conditionalFileter</span><span style="color:#f92672">(</span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> list<span style="color:#f92672">,</span> Predicate<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> predicate<span style="color:#f92672">){</span>
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>Integer i <span style="color:#f92672">:</span> list<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>predicate<span style="color:#f92672">.</span><span style="color:#a6e22e">test</span><span style="color:#f92672">(</span>i<span style="color:#f92672">)){</span>
+                System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">print</span><span style="color:#f92672">(</span>i<span style="color:#f92672">+</span><span style="color:#e6db74">&#34; &#34;</span><span style="color:#f92672">);</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">conditionalFileter2</span><span style="color:#f92672">(</span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> list<span style="color:#f92672">,</span> Predicate<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> predicate1<span style="color:#f92672">,</span>Predicate<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> predicate2<span style="color:#f92672">){</span>
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>Integer integer <span style="color:#f92672">:</span> list<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>predicate1<span style="color:#f92672">.</span><span style="color:#a6e22e">and</span><span style="color:#f92672">(</span>predicate2<span style="color:#f92672">).</span><span style="color:#a6e22e">negate</span><span style="color:#f92672">().</span><span style="color:#a6e22e">test</span><span style="color:#f92672">(</span>integer<span style="color:#f92672">)){</span>
+                System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">print</span><span style="color:#f92672">(</span>integer<span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">);</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">conditionalFileter3</span><span style="color:#f92672">(</span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> list<span style="color:#f92672">,</span> Predicate<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> predicate1<span style="color:#f92672">,</span>Predicate<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> predicate2<span style="color:#f92672">){</span>
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>Integer integer <span style="color:#f92672">:</span> list<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>predicate1<span style="color:#f92672">.</span><span style="color:#a6e22e">or</span><span style="color:#f92672">(</span>predicate2<span style="color:#f92672">).</span><span style="color:#a6e22e">test</span><span style="color:#f92672">(</span>integer<span style="color:#f92672">)){</span>
+                System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">print</span><span style="color:#f92672">(</span>integer<span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">);</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> Predicate<span style="color:#f92672">&lt;</span>Date<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">isEqual</span><span style="color:#f92672">(</span>Object object<span style="color:#f92672">){</span>
+        <span style="color:#66d9ef">return</span> Predicate<span style="color:#f92672">.</span><span style="color:#a6e22e">isEqual</span><span style="color:#f92672">(</span>object<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>1 3 5 7 9 
+2 4 6 8 10 
+6 7 8 9 10 
+1 2 1 2 3 4 5 6 7 8 9 10 
+1234579
+24678910false</p>
+<h4 id="9supplier">9.Supplier</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> java.util.function<span style="color:#f92672">;</span>
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e"> * Represents a supplier of results.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;p&gt;There is no requirement that a new or distinct result be returned each
+</span><span style="color:#75715e"> * time the supplier is invoked.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;p&gt;This is a &lt;a href=&#34;package-summary.html&#34;&gt;functional interface&lt;/a&gt;
+</span><span style="color:#75715e"> * whose functional method is {@link #get()}.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * @param &lt;T&gt; the type of results supplied by this supplier
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * @since 1.8
+</span><span style="color:#75715e"> */</span>
+<span style="color:#a6e22e">@FunctionalInterface</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Supplier</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * Gets a result.
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @return a result
+</span><span style="color:#75715e">     */</span>
+    T <span style="color:#a6e22e">get</span><span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Student</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">private</span> String name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;张三&#34;</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">int</span> age<span style="color:#f92672">=</span>20<span style="color:#f92672">;</span>
+    <span style="color:#75715e">//构造方法略
+</span><span style="color:#75715e"></span><span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">StudentTest</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Supplier<span style="color:#f92672">&lt;</span>Student<span style="color:#f92672">&gt;</span> supplier<span style="color:#f92672">=()-&gt;</span><span style="color:#66d9ef">new</span> Student<span style="color:#f92672">();</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>supplier<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">());</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>张三</p>
+<p><strong>BinaryOperator</strong>  extends BiFunction</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> java.util.function<span style="color:#f92672">;</span>
+
+<span style="color:#f92672">import</span> java.util.Objects<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> java.util.Comparator<span style="color:#f92672">;</span>
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e"> * Represents an operation upon two operands of the same type, producing a result
+</span><span style="color:#75715e"> * of the same type as the operands.  This is a specialization of
+</span><span style="color:#75715e"> * {@link BiFunction} for the case where the operands and the result are all of
+</span><span style="color:#75715e"> * the same type.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;p&gt;This is a &lt;a href=&#34;package-summary.html&#34;&gt;functional interface&lt;/a&gt;
+</span><span style="color:#75715e"> * whose functional method is {@link #apply(Object, Object)}.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * @param &lt;T&gt; the type of the operands and result of the operator
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * @see BiFunction
+</span><span style="color:#75715e"> * @see UnaryOperator
+</span><span style="color:#75715e"> * @since 1.8
+</span><span style="color:#75715e"> */</span>
+<span style="color:#a6e22e">@FunctionalInterface</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">BinaryOperator</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">extends</span> BiFunction<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">,</span>T<span style="color:#f92672">,</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * Returns a {@link BinaryOperator} which returns the lesser of two elements
+</span><span style="color:#75715e">     * according to the specified {@code Comparator}.
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @param &lt;T&gt; the type of the input arguments of the comparator
+</span><span style="color:#75715e">     * @param comparator a {@code Comparator} for comparing the two values
+</span><span style="color:#75715e">     * @return a {@code BinaryOperator} which returns the lesser of its operands,
+</span><span style="color:#75715e">     *         according to the supplied {@code Comparator}
+</span><span style="color:#75715e">     * @throws NullPointerException if the argument is null
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> BinaryOperator<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">minBy</span><span style="color:#f92672">(</span>Comparator<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">super</span> T<span style="color:#f92672">&gt;</span> comparator<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">requireNonNull</span><span style="color:#f92672">(</span>comparator<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>a<span style="color:#f92672">,</span> b<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> comparator<span style="color:#f92672">.</span><span style="color:#a6e22e">compare</span><span style="color:#f92672">(</span>a<span style="color:#f92672">,</span> b<span style="color:#f92672">)</span> <span style="color:#f92672">&lt;=</span> 0 <span style="color:#f92672">?</span> a <span style="color:#f92672">:</span> b<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * Returns a {@link BinaryOperator} which returns the greater of two elements
+</span><span style="color:#75715e">     * according to the specified {@code Comparator}.
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @param &lt;T&gt; the type of the input arguments of the comparator
+</span><span style="color:#75715e">     * @param comparator a {@code Comparator} for comparing the two values
+</span><span style="color:#75715e">     * @return a {@code BinaryOperator} which returns the greater of its operands,
+</span><span style="color:#75715e">     *         according to the supplied {@code Comparator}
+</span><span style="color:#75715e">     * @throws NullPointerException if the argument is null
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> BinaryOperator<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">maxBy</span><span style="color:#f92672">(</span>Comparator<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">super</span> T<span style="color:#f92672">&gt;</span> comparator<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">requireNonNull</span><span style="color:#f92672">(</span>comparator<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>a<span style="color:#f92672">,</span> b<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> comparator<span style="color:#f92672">.</span><span style="color:#a6e22e">compare</span><span style="color:#f92672">(</span>a<span style="color:#f92672">,</span> b<span style="color:#f92672">)</span> <span style="color:#f92672">&gt;=</span> 0 <span style="color:#f92672">?</span> a <span style="color:#f92672">:</span> b<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p><strong>用于没有输入参数的工厂</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BinaryOperateorTest</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        BinaryOperateorTest operateorTest <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> BinaryOperateorTest<span style="color:#f92672">();</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span> operateorTest<span style="color:#f92672">.</span><span style="color:#a6e22e">opearte</span><span style="color:#f92672">(</span>10<span style="color:#f92672">,</span> 20<span style="color:#f92672">,</span> <span style="color:#f92672">(</span>c<span style="color:#f92672">,</span>d<span style="color:#f92672">)-&gt;</span>c<span style="color:#f92672">+</span>d<span style="color:#f92672">));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span> operateorTest<span style="color:#f92672">.</span><span style="color:#a6e22e">opearte</span><span style="color:#f92672">(</span>10<span style="color:#f92672">,</span> 20<span style="color:#f92672">,</span> <span style="color:#f92672">(</span>c<span style="color:#f92672">,</span>d<span style="color:#f92672">)-&gt;</span>c<span style="color:#f92672">-</span>d<span style="color:#f92672">));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span> operateorTest<span style="color:#f92672">.</span><span style="color:#a6e22e">opearte</span><span style="color:#f92672">(</span>10<span style="color:#f92672">,</span> 20<span style="color:#f92672">,</span> <span style="color:#f92672">(</span>c<span style="color:#f92672">,</span>d<span style="color:#f92672">)-&gt;</span>c<span style="color:#f92672">*</span>d<span style="color:#f92672">));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span> operateorTest<span style="color:#f92672">.</span><span style="color:#a6e22e">opearte</span><span style="color:#f92672">(</span>10<span style="color:#f92672">,</span> 20<span style="color:#f92672">,</span> <span style="color:#f92672">(</span>c<span style="color:#f92672">,</span>d<span style="color:#f92672">)-&gt;</span>c<span style="color:#f92672">+</span>d<span style="color:#f92672">));</span>
+
+        String aShort <span style="color:#f92672">=</span> operateorTest<span style="color:#f92672">.</span><span style="color:#a6e22e">getShort</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;tang&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;yao&#34;</span><span style="color:#f92672">,</span> <span style="color:#f92672">(</span>a<span style="color:#f92672">,</span> b<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> a<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">()</span> <span style="color:#f92672">-</span>b<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">());</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;aShort = &#34;</span> <span style="color:#f92672">+</span> aShort<span style="color:#f92672">);</span>
+        String aShort1 <span style="color:#f92672">=</span> operateorTest<span style="color:#f92672">.</span><span style="color:#a6e22e">getShort</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;tang&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;yao&#34;</span><span style="color:#f92672">,</span> <span style="color:#f92672">(</span>a<span style="color:#f92672">,</span> b<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> a<span style="color:#f92672">.</span><span style="color:#a6e22e">getBytes</span><span style="color:#f92672">()[</span>0<span style="color:#f92672">]</span> <span style="color:#f92672">-</span> b<span style="color:#f92672">.</span><span style="color:#a6e22e">getBytes</span><span style="color:#f92672">()[</span>0<span style="color:#f92672">]);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;aShort1 = &#34;</span> <span style="color:#f92672">+</span> aShort1<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">opearte</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> a<span style="color:#f92672">,</span><span style="color:#66d9ef">int</span> b<span style="color:#f92672">,</span> BinaryOperator<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> binaryOperator<span style="color:#f92672">){</span>
+       <span style="color:#66d9ef">return</span> binaryOperator<span style="color:#f92672">.</span><span style="color:#a6e22e">apply</span><span style="color:#f92672">(</span>a<span style="color:#f92672">,</span> b<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getShort</span><span style="color:#f92672">(</span>String a<span style="color:#f92672">,</span> String b<span style="color:#f92672">,</span> Comparator<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> comparator<span style="color:#f92672">){</span>
+        <span style="color:#66d9ef">return</span> BinaryOperator<span style="color:#f92672">.</span><span style="color:#a6e22e">minBy</span><span style="color:#f92672">(</span>comparator<span style="color:#f92672">).</span><span style="color:#a6e22e">apply</span><span style="color:#f92672">(</span>a<span style="color:#f92672">,</span> b<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+<span style="color:#f92672">}</span>
+30
+<span style="color:#f92672">-</span>10
+200
+30
+aShort <span style="color:#f92672">=</span> yao
+aShort1 <span style="color:#f92672">=</span> tang
+</code></pre></div><h4 id="10optional">10.Optional</h4>
+<p>NPE NullPointerException</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">if</span><span style="color:#f92672">(</span><span style="color:#66d9ef">null</span><span style="color:#f92672">!=</span>person<span style="color:#f92672">){</span>
+	Address address<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Address<span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span><span style="color:#66d9ef">null</span> <span style="color:#f92672">!=</span> address<span style="color:#f92672">){</span>
+        <span style="color:#f92672">...</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>使用Optional提高程序健壮性</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * A container object which may or may not contain a non-null value.
+</span><span style="color:#75715e"> * If a value is present, {@code isPresent()} will return {@code true} and
+</span><span style="color:#75715e"> * {@code get()} will return the value.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;p&gt;Additional methods that depend on the presence or absence of a contained
+</span><span style="color:#75715e"> * value are provided, such as {@link #orElse(java.lang.Object) orElse()}
+</span><span style="color:#75715e"> * (return a default value if value not present) and
+</span><span style="color:#75715e"> * {@link #ifPresent(java.util.function.Consumer) ifPresent()} (execute a block
+</span><span style="color:#75715e"> * of code if the value is present).
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;p&gt;This is a &lt;a href=&#34;../lang/doc-files/ValueBased.html&#34;&gt;value-based&lt;/a&gt;
+</span><span style="color:#75715e"> * class; use of identity-sensitive operations (including reference equality
+</span><span style="color:#75715e"> * ({@code ==}), identity hash code, or synchronization) on instances of
+</span><span style="color:#75715e"> * {@code Optional} may have unpredictable results and should be avoided.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * @since 1.8
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Optional</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+    <span style="color:#f92672">...</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>创建Optional对象方法</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> Optional<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">empty</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    <span style="color:#a6e22e">@SuppressWarnings</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;unchecked&#34;</span><span style="color:#f92672">)</span>
+    Optional<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> t <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>Optional<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;)</span> EMPTY<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">return</span> t<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Optional<span style="color:#f92672">&lt;?&gt;</span> EMPTY <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Optional<span style="color:#f92672">&lt;&gt;();</span> <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Optional</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> Optional<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>T value<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> Optional<span style="color:#f92672">&lt;&gt;(</span>value<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+<span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Optional</span><span style="color:#f92672">(</span>T value<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">requireNonNull</span><span style="color:#f92672">(</span>value<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> T <span style="color:#a6e22e">requireNonNull</span><span style="color:#f92672">(</span>T obj<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>obj <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> NullPointerException<span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">return</span> obj<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> Optional<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">ofNullable</span><span style="color:#f92672">(</span>T value<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">return</span> value <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">?</span> empty<span style="color:#f92672">()</span> <span style="color:#f92672">:</span> of<span style="color:#f92672">(</span>value<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>重要方法</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">isPresent</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">return</span> value <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+ <span style="color:#66d9ef">public</span> T <span style="color:#a6e22e">get</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>value <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> NoSuchElementException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;No value present&#34;</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">return</span> value<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+<span style="color:#66d9ef">public</span> T <span style="color:#a6e22e">orElse</span><span style="color:#f92672">(</span>T other<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">return</span> value <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">?</span> value <span style="color:#f92672">:</span> other<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+<span style="color:#66d9ef">public</span> T <span style="color:#a6e22e">orElseGet</span><span style="color:#f92672">(</span>Supplier<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">extends</span> T<span style="color:#f92672">&gt;</span> other<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">return</span> value <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">?</span> value <span style="color:#f92672">:</span> other<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"> <span style="color:#75715e">//从数据库查出一个对象，不确定是否为空
+</span><span style="color:#75715e"></span>Optional<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> optional<span style="color:#f92672">=</span>Optional<span style="color:#f92672">.</span><span style="color:#a6e22e">ofNullable</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;hello&#34;</span><span style="color:#f92672">);</span>
+<span style="color:#75715e">//        if (optional.isPresent()){
+</span><span style="color:#75715e">//            System.out.println(optional.get());
+</span><span style="color:#75715e">//        }
+</span><span style="color:#75715e"></span>        optional<span style="color:#f92672">.</span><span style="color:#a6e22e">ifPresent</span><span style="color:#f92672">(</span>p<span style="color:#f92672">-&gt;</span> System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>p<span style="color:#f92672">));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;------------&#34;</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>optional<span style="color:#f92672">.</span><span style="color:#a6e22e">orElse</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;world&#34;</span><span style="color:#f92672">));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;------------&#34;</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>optional<span style="color:#f92672">.</span><span style="color:#a6e22e">orElseGet</span><span style="color:#f92672">(()-&gt;</span><span style="color:#e6db74">&#34;你好&#34;</span><span style="color:#f92672">));</span>
+
+hello
+<span style="color:#f92672">------------</span>
+hello
+<span style="color:#f92672">------------</span>
+hello
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Optional<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> optional<span style="color:#f92672">=</span>Optional<span style="color:#f92672">.</span><span style="color:#a6e22e">empty</span><span style="color:#f92672">();</span>
+
+<span style="color:#f92672">------------</span>
+world
+<span style="color:#f92672">------------</span>
+你好
+
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Employee</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">private</span> String name<span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">Employee</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">Employee</span><span style="color:#f92672">(</span>String name<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> name<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getName</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> name<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setName</span><span style="color:#f92672">(</span>String name<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> name<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">toString</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Employee{&#34;</span> <span style="color:#f92672">+</span>
+                <span style="color:#e6db74">&#34;name=&#39;&#34;</span> <span style="color:#f92672">+</span> name <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;\&#39;&#39;</span> <span style="color:#f92672">+</span>
+                <span style="color:#e6db74">&#39;}&#39;</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">
+<span style="color:#f92672">import</span> java.util.List<span style="color:#f92672">;</span>
+
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Company</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">private</span> String name<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> List<span style="color:#f92672">&lt;</span>Employee<span style="color:#f92672">&gt;</span> employees<span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getName</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> name<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setName</span><span style="color:#f92672">(</span>String name<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> name<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> List<span style="color:#f92672">&lt;</span>Employee<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getEmployees</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> employees<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setEmployees</span><span style="color:#f92672">(</span>List<span style="color:#f92672">&lt;</span>Employee<span style="color:#f92672">&gt;</span> employees<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">employees</span> <span style="color:#f92672">=</span> employees<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><pre><code>package com.tang.jdk8;
+
+import java.util.*;
+
+public class OptionalTest2 {
+    public static void main(String[] args) {
+        Employee employee1=new Employee();
+        employee1.setName(&quot;zhangsan&quot;);
+        Employee employee2=new Employee();
+        employee2.setName(&quot;lisi&quot;);
+
+        Company company = new Company();
+        company.setName(&quot;company1&quot;);
+
+        List&lt;Employee&gt; list= Arrays.asList(employee1,employee2);
+//        company.setEmployees(list);
+        Optional&lt;Company&gt; optional=Optional.ofNullable(company);
+        optional.map(theCompany-&gt;theCompany.getEmployees()).orElse(Collections.emptyList());
+
+    public void test(Optional optional){
+		//Optional作为参数会出现问题
+    }
+}
+</code></pre><p>Optional没有被序列化，做参数的时候会被警告</p>
+<p><img src="C:%5CUsers%5C10136%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5C1574091526764.png" alt="1574091526764"></p>
+<h4 id="补充value-based-classes">补充：Value-based Classes</h4>
+<p>Some classes, such as</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">java<span style="color:#f92672">.</span><span style="color:#a6e22e">util</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Optional</span>
+</code></pre></div><p>and</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">java<span style="color:#f92672">.</span><span style="color:#a6e22e">time</span><span style="color:#f92672">.</span><span style="color:#a6e22e">LocalDateTime</span>
+</code></pre></div><p>, are value-based. Instances of a value-based class:</p>
+<ul>
+<li>are final and immutable (though may contain references to mutable objects);</li>
+<li>have implementations of <code>equals</code>, <code>hashCode</code>, and <code>toString</code> which are computed solely from the instance&rsquo;s state and not from its identity or the state of any other object or variable;</li>
+<li>make no use of identity-sensitive operations such as reference equality (<code>==</code>) between instances, identity hash code of instances, or synchronization on an instances&rsquo;s intrinsic lock;</li>
+<li>are considered equal solely based on <code>equals()</code>, not based on reference equality (<code>==</code>);</li>
+<li>do not have accessible constructors, but are instead instantiated through factory methods which make no committment as to the identity of returned instances;</li>
+<li>are <em>freely substitutable</em> when equal, meaning that interchanging any two instances <code>x</code> and <code>y</code> that are equal according to <code>equals()</code> in any computation or method invocation should produce no visible change in behavior.</li>
+</ul>
+<p>A program may produce unpredictable results if it attempts to distinguish two references to equal values of a value-based class, whether directly via reference equality or indirectly via an appeal to synchronization, identity hashing, serialization, or any other identity-sensitive mechanism. Use of such identity-sensitive operations on instances of value-based classes may have unpredictable effects and should be avoided.</p>
+<h4 id="11方法引用">11.方法引用</h4>
+<p>方法引用实际上是Lambda表达式的语法糖</p>
+<p>我们可以将方法引用看做【函数指针】</p>
+<p><strong>方法引用共分为四类</strong></p>
+<p><strong>1.类名::静态方法名</strong></p>
+<p><strong>2.引用名（对象名）::实例方法名</strong></p>
+<p><strong>3.类名::实例方法名</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">compareByName</span><span style="color:#f92672">(</span>Student stu1<span style="color:#f92672">){</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">().</span><span style="color:#a6e22e">compareToIgnoreCase</span><span style="color:#f92672">(</span>stu1<span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">());</span>
+<span style="color:#f92672">}</span>
+
+students<span style="color:#f92672">.</span><span style="color:#a6e22e">sort</span><span style="color:#f92672">((</span>stu1<span style="color:#f92672">,</span>stu2<span style="color:#f92672">)-&gt;</span>stu1<span style="color:#f92672">.</span><span style="color:#a6e22e">compareByName</span><span style="color:#f92672">(</span>stu2<span style="color:#f92672">));</span>
+students<span style="color:#f92672">.</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println<span style="color:#f92672">);</span>
+students<span style="color:#f92672">.</span><span style="color:#a6e22e">sort</span><span style="color:#f92672">(</span>Student<span style="color:#f92672">::</span>compareByName<span style="color:#f92672">);</span>
+</code></pre></div><p>类的名字引用方法的时候，一定有对象调用compareByName方法，这里调用的compareByName实际上是第一个student对象（Lambda表达式第一个参数），也就是当前对象stu1（this），后面传入的对象作为参数</p>
+<p><strong>4.构造方法引用：类名::new</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getString</span><span style="color:#f92672">(</span>Supplier<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> supplier<span style="color:#f92672">){</span>
+    <span style="color:#66d9ef">return</span> supplier<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">()</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;test&#34;</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getString2</span><span style="color:#f92672">(</span>String str<span style="color:#f92672">,</span> Function<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span>String<span style="color:#f92672">&gt;</span> function<span style="color:#f92672">){</span>
+    <span style="color:#66d9ef">return</span> function<span style="color:#f92672">.</span><span style="color:#a6e22e">apply</span><span style="color:#f92672">(</span>str<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">MethodRefencedTest methodRefencedTest<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> MethodRefencedTest<span style="color:#f92672">();</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>methodRefencedTest<span style="color:#f92672">.</span><span style="color:#a6e22e">getString</span><span style="color:#f92672">(</span>String<span style="color:#f92672">::</span><span style="color:#66d9ef">new</span><span style="color:#f92672">));</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>methodRefencedTest<span style="color:#f92672">.</span><span style="color:#a6e22e">getString2</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;hello&#34;</span><span style="color:#f92672">,</span>String<span style="color:#f92672">::</span><span style="color:#66d9ef">new</span><span style="color:#f92672">));</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#a6e22e">String</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">.</span><span style="color:#a6e22e">value</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#a6e22e">String</span><span style="color:#f92672">(</span>String original<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> original<span style="color:#f92672">.</span><span style="color:#a6e22e">value</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">hash</span> <span style="color:#f92672">=</span> original<span style="color:#f92672">.</span><span style="color:#a6e22e">hash</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>test
+hello</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Setter</span>
+<span style="color:#a6e22e">@Getter</span>
+<span style="color:#a6e22e">@AllArgsConstructor</span>
+<span style="color:#a6e22e">@NoArgsConstructor</span>
+<span style="color:#a6e22e">@ToString</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Student</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">private</span> String name<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">int</span> score<span style="color:#f92672">;</span>
+    
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">compareStudentScore</span><span style="color:#f92672">(</span>Student student1<span style="color:#f92672">,</span>Student student2<span style="color:#f92672">){</span>
+        <span style="color:#66d9ef">return</span> student1<span style="color:#f92672">.</span><span style="color:#a6e22e">getScore</span><span style="color:#f92672">()-</span>student2<span style="color:#f92672">.</span><span style="color:#a6e22e">getScore</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">compareStudentName</span><span style="color:#f92672">(</span>Student student1<span style="color:#f92672">,</span>Student student2<span style="color:#f92672">){</span>
+        <span style="color:#66d9ef">return</span> student1<span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">().</span><span style="color:#a6e22e">compareToIgnoreCase</span><span style="color:#f92672">(</span>student2<span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">());</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">compareByName</span><span style="color:#f92672">(</span>Student stu1<span style="color:#f92672">){</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">().</span><span style="color:#a6e22e">compareToIgnoreCase</span><span style="color:#f92672">(</span>stu1<span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">());</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">compareByScore</span><span style="color:#f92672">(</span>Student stu1<span style="color:#f92672">){</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getScore</span><span style="color:#f92672">()-</span>stu1<span style="color:#f92672">.</span><span style="color:#a6e22e">getScore</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+    
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MethodRefencedTest</span> <span style="color:#f92672">{</span>
+    
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getString</span><span style="color:#f92672">(</span>Supplier<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> supplier<span style="color:#f92672">){</span>
+        <span style="color:#66d9ef">return</span> supplier<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">()</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;test&#34;</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getString2</span><span style="color:#f92672">(</span>String str<span style="color:#f92672">,</span> Function<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span>String<span style="color:#f92672">&gt;</span> function<span style="color:#f92672">){</span>
+        <span style="color:#66d9ef">return</span> function<span style="color:#f92672">.</span><span style="color:#a6e22e">apply</span><span style="color:#f92672">(</span>str<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Student student1<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Student<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;zhangsan&#34;</span><span style="color:#f92672">,</span> 10<span style="color:#f92672">);</span>
+        Student student2<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Student<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;lisi&#34;</span><span style="color:#f92672">,</span> 20<span style="color:#f92672">);</span>
+        Student student3<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Student<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;wangwu&#34;</span><span style="color:#f92672">,</span> 30<span style="color:#f92672">);</span>
+        Student student4<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Student<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;zhaoliu&#34;</span><span style="color:#f92672">,</span> 40<span style="color:#f92672">);</span>
+
+        List<span style="color:#f92672">&lt;</span>Student<span style="color:#f92672">&gt;</span> students <span style="color:#f92672">=</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span>student1<span style="color:#f92672">,</span> student2<span style="color:#f92672">,</span> student3<span style="color:#f92672">,</span> student4<span style="color:#f92672">);</span>
+        <span style="color:#75715e">//students.sort((stu1, stu2)-&gt;Student.compareStudentScore(stu1, stu2));
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//这里用了 类名::静态方法名 
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//Student::compareStudentScore和Student.compareStudentScore区别:，
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//前者可以类比为函数指针的形式，指向另外一个函数，不能传递任何参数，由运行时自动传进来，后者不能作为单独表达式存在，必须带（），里面有参数需要传递进去，表示方法调用的概念。
+</span><span style="color:#75715e"></span>        students<span style="color:#f92672">.</span><span style="color:#a6e22e">sort</span><span style="color:#f92672">(</span>Student<span style="color:#f92672">::</span>compareStudentScore<span style="color:#f92672">);</span>
+        students<span style="color:#f92672">.</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>student <span style="color:#f92672">-&gt;</span> System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>student<span style="color:#f92672">.</span><span style="color:#a6e22e">getScore</span><span style="color:#f92672">()));</span>
+        <span style="color:#75715e">//10
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">//20
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//30
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">//40
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//students.sort((stu1,stu2)-&gt;Student.compareStudentName(stu1,stu2));
+</span><span style="color:#75715e"></span>        students<span style="color:#f92672">.</span><span style="color:#a6e22e">sort</span><span style="color:#f92672">(</span>Student<span style="color:#f92672">::</span>compareStudentName<span style="color:#f92672">);</span>
+        students<span style="color:#f92672">.</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>student <span style="color:#f92672">-&gt;</span> System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>student<span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">()));</span>
+        <span style="color:#75715e">//lisi
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">//wangwu
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">//zhangsan
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">//zhaoliu
+</span><span style="color:#75715e"></span>        
+        
+<span style="color:#75715e">//
+</span><span style="color:#75715e">//        StudentComparator studentComparator = new StudentComparator();
+</span><span style="color:#75715e">//        students.sort((stu1, stu2)-&gt; studentComparator.compareStudentByName(stu1, stu2));
+</span><span style="color:#75715e">//        students.sort(studentComparator::compareStudentByName);
+</span><span style="color:#75715e">//        students.forEach(System.out::println);
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//        students.sort((stu1,stu2)-&gt;stu1.compareByName(stu2));
+</span><span style="color:#75715e">//        students.forEach(System.out::println);
+</span><span style="color:#75715e">//        students.sort(Student::compareByName);
+</span><span style="color:#75715e">//
+</span><span style="color:#75715e">//        students.sort(Student::compareByScore);
+</span><span style="color:#75715e">//
+</span><span style="color:#75715e">//        List&lt;String&gt; cities = Arrays.asList(&#34;tianjin&#34;, &#34;beijing&#34;, &#34;shagnhai&#34;, &#34;guangzhou&#34;);
+</span><span style="color:#75715e">//        Collections.sort(cities, String::compareToIgnoreCase);
+</span><span style="color:#75715e">//        cities.forEach(System.out::println);
+</span><span style="color:#75715e"></span>
+        MethodRefencedTest methodRefencedTest<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> MethodRefencedTest<span style="color:#f92672">();</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>methodRefencedTest<span style="color:#f92672">.</span><span style="color:#a6e22e">getString</span><span style="color:#f92672">(</span>String<span style="color:#f92672">::</span><span style="color:#66d9ef">new</span><span style="color:#f92672">));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>methodRefencedTest<span style="color:#f92672">.</span><span style="color:#a6e22e">getString2</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;hello&#34;</span><span style="color:#f92672">,</span>String<span style="color:#f92672">::</span><span style="color:#66d9ef">new</span><span style="color:#f92672">));</span>
+
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h4 id="13默认方法">13.默认方法</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">MyInterface1</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">default</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">mythod</span><span style="color:#f92672">(){</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;MyInterface1&#34;</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">MyInterface2</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">default</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">mythod</span><span style="color:#f92672">(){</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;MyInterface2&#34;</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyClass</span> <span style="color:#66d9ef">implements</span> MyInterface1<span style="color:#f92672">,</span>MyInterface2 <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        MyClass myClass <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> MyClass<span style="color:#f92672">();</span>
+        myClass<span style="color:#f92672">.</span><span style="color:#a6e22e">mythod</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">mythod</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+<span style="color:#75715e">//        System.out.println(&#34;MyClass&#34;);
+</span><span style="color:#75715e"></span>        MyInterface2<span style="color:#f92672">.</span><span style="color:#a6e22e">super</span><span style="color:#f92672">.</span><span style="color:#a6e22e">mythod</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>实现了多个接口，如果默认方法名相同，则必须重写方法，如果想用其中一个方法，可以使用<em><strong>接口名+super+默认方法名的方法</strong></em></p>
+<p><strong>java认为实现类比接口更为具体</strong>，所以如果MyClass继承了MyInterface1Impl和实现了Interface2，那么对于具有相同的默认方法，则<strong>类MyClass优先调用继承类里面的方法。</strong></p>
+<h4 id="14为什么要有默认方法">14.为什么要有默认方法</h4>
+<p>在 java 8 之前，接口与其实现类之间的 <strong>耦合度</strong> 太高了（<strong>tightly coupled</strong>），当需要为一个接口添加方法时，所有的实现类都必须随之修改。默认方法解决了这个问题，它可以为接口添加新的方法，而不会破坏已有的接口的实现。这在 lambda 表达式作为 java 8 语言的重要特性而出现之际，为升级旧接口且保持向后兼容（backward compatibility）提供了途径。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">String[] array = new String[] {
+        &#34;hello&#34;,
+        &#34;, &#34;,
+        &#34;world&#34;,
+};
+List&lt;<span style="color:#f92672">String</span>&gt; list = Arrays.asList(array);
+list.forEach(System.out::println); // 这是 jdk 1.8 新增的接口默认方法
+</code></pre></div><h6 id="这个-foreach-方法是-jdk-18-新增的接口默认方法正是因为有了默认方法的引入才不会因为-iterable-接口中添加了-foreach-方法就需要修改所有-iterable-接口的实现类">这个 forEach 方法是 jdk 1.8 新增的接口默认方法，正是因为有了默认方法的引入，才不会因为 Iterable 接口中添加了 forEach 方法就需要修改所有 Iterable 接口的实现类。</h6>
+<h4 id="15stream">15.Stream</h4>
+<p><strong>三部分构成</strong></p>
+<p><strong>1.source（源）</strong></p>
+<p><strong>2.零个或多个中间操作</strong></p>
+<p><strong>3.终止操作</strong></p>
+<p><strong>流操作的分类</strong></p>
+<p><strong>1.惰性求值（中间操作）</strong></p>
+<p><strong>2.及早求值（终止求值</strong>）</p>
+<p><strong>构造stream的方法</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Stream stream1<span style="color:#f92672">=</span>Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;hello&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;world&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;helloWorld!&#34;</span><span style="color:#f92672">);</span>
+String<span style="color:#f92672">[]</span> MyArray<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> String<span style="color:#f92672">[]{</span><span style="color:#e6db74">&#34;hello&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;world&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;helloWorld!&#34;</span><span style="color:#f92672">};</span>
+Stream stream2<span style="color:#f92672">=</span>Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>MyArray<span style="color:#f92672">);</span>
+Stream stream3<span style="color:#f92672">=</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">(</span>MyArray<span style="color:#f92672">);</span>
+List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> list<span style="color:#f92672">=</span>Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span>MyArray<span style="color:#f92672">);</span>
+Stream<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> stream4 <span style="color:#f92672">=</span> list<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">();</span>
+</code></pre></div><p><strong>本质区别：函数式编程传递的是行为，根据行为对数据进行加工，面向对象编程传递的是数据</strong></p>
+<h4 id="16方法签名">16.方法签名：</h4>
+<p><strong>方法签名由方法名称和一个参数列表（方法的参数的顺序和类型）组成。</strong></p>
+<h4 id="17streamcollect">17.stream.collect</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">&lt;</span>R<span style="color:#f92672">&gt;</span> R <span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Supplier<span style="color:#f92672">&lt;</span>R<span style="color:#f92672">&gt;</span> supplier<span style="color:#f92672">,</span>
+              BiConsumer<span style="color:#f92672">&lt;</span>R<span style="color:#f92672">,</span> <span style="color:#f92672">?</span> <span style="color:#66d9ef">super</span> T<span style="color:#f92672">&gt;</span> accumulator<span style="color:#f92672">,</span>
+              BiConsumer<span style="color:#f92672">&lt;</span>R<span style="color:#f92672">,</span> R<span style="color:#f92672">&gt;</span> combiner<span style="color:#f92672">);</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">R result <span style="color:#f92672">=</span> supplier<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">();</span>
+   <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>T element <span style="color:#f92672">:</span> <span style="color:#66d9ef">this</span> stream<span style="color:#f92672">)</span>
+       accumulator<span style="color:#f92672">.</span><span style="color:#a6e22e">accept</span><span style="color:#f92672">(</span>result<span style="color:#f92672">,</span> element<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">return</span> result<span style="color:#f92672">;</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> list <span style="color:#f92672">=</span>
+        stream<span style="color:#f92672">.</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(()-&gt;</span><span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;&gt;(),(</span>list1<span style="color:#f92672">,</span>item<span style="color:#f92672">)-&gt;</span>list1<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>item<span style="color:#f92672">),(</span>list1<span style="color:#f92672">,</span>list2<span style="color:#f92672">)-&gt;</span>list1<span style="color:#f92672">.</span><span style="color:#a6e22e">addAll</span><span style="color:#f92672">(</span>list2<span style="color:#f92672">));</span>
+</code></pre></div><p>collect需要三个参数，第一个参数是调用supplier的get方法，也就是相当于得到一个list集合，例如：</p>
+<p><strong>()-&gt;new ArrayList&lt;&gt;（）</strong></p>
+<p>第二个参数是调用BiConSumer函数式接口的accept方法，该方法传入两个参数，不返回值，例如：</p>
+<p><strong>（list1,item）-&gt;list1.add(item)</strong>   item为stream流的每一个元素，添加到每一个ArrayList中</p>
+<p>第三个参数也是调用BiConSumer函数式接口的accept方法，目的是将每次产生的Arraylist合并到一个新的ArrayList集合中</p>
+<p>（list1，list2）-&gt;list1.addAll(list2)</p>
+<p>转换为对应的<strong>方法引用</strong>为：</p>
+<pre><code>List&lt;String&gt; list=stream.collect(LinkedList::new,LinkedList::add,LinkedList::addAll);
+list.forEach(System.out::println);
+</code></pre><p>hello
+world
+helloWorld!</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/*
+</span><span style="color:#75715e">*
+</span><span style="color:#75715e">* @param &lt;R&gt; type of the result
+</span><span style="color:#75715e">* @param supplier a function that creates a new result container. For a
+</span><span style="color:#75715e">*                 parallel execution, this function may be called
+</span><span style="color:#75715e">*                 multiple times and must return a fresh value each time.
+</span><span style="color:#75715e">* @param accumulator an &lt;a href=&#34;package-summary.html#Associativity&#34;&gt;associative&lt;/a&gt;,
+</span><span style="color:#75715e">*                    &lt;a href=&#34;package-summary.html#NonInterference&#34;&gt;non-interfering&lt;/a&gt;,
+</span><span style="color:#75715e">*                    &lt;a href=&#34;package-summary.html#Statelessness&#34;&gt;stateless&lt;/a&gt;
+</span><span style="color:#75715e">*                    function for incorporating an additional element into a result
+</span><span style="color:#75715e">* @param combiner an &lt;a href=&#34;package-summary.html#Associativity&#34;&gt;associative&lt;/a&gt;,
+</span><span style="color:#75715e">*                    &lt;a href=&#34;package-summary.html#NonInterference&#34;&gt;non-interfering&lt;/a&gt;,
+</span><span style="color:#75715e">*                    &lt;a href=&#34;package-summary.html#Statelessness&#34;&gt;stateless&lt;/a&gt;
+</span><span style="color:#75715e">*                    function for combining two values, which must be
+</span><span style="color:#75715e">*                    compatible with the accumulator function
+</span><span style="color:#75715e">* @return the result of the reduction
+</span><span style="color:#75715e">*/</span>
+</code></pre></div><p>==============================================华丽的分割线</p>
+<pre><code>stream.collect(Collectors.toList());
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span>
+Collector<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">,</span> <span style="color:#f92672">?,</span> List<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;&gt;</span> <span style="color:#a6e22e">toList</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> CollectorImpl<span style="color:#f92672">&lt;&gt;((</span>Supplier<span style="color:#f92672">&lt;</span>List<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;&gt;)</span> ArrayList<span style="color:#f92672">::</span><span style="color:#66d9ef">new</span><span style="color:#f92672">,</span> List<span style="color:#f92672">::</span>add<span style="color:#f92672">,</span>
+                               <span style="color:#f92672">(</span>left<span style="color:#f92672">,</span> right<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span> left<span style="color:#f92672">.</span><span style="color:#a6e22e">addAll</span><span style="color:#f92672">(</span>right<span style="color:#f92672">);</span> <span style="color:#66d9ef">return</span> left<span style="color:#f92672">;</span> <span style="color:#f92672">},</span>
+                               CH_ID<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>默认返回的是<strong>ArrayList</strong>，如果想返回<strong>LinkedList</strong>就需要看懂源代码操作</p>
+<p><strong>Collections.toCollection();</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">,</span> C <span style="color:#66d9ef">extends</span> Collection<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;&gt;</span>
+Collector<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">,</span> <span style="color:#f92672">?,</span> C<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">toCollection</span><span style="color:#f92672">(</span>Supplier<span style="color:#f92672">&lt;</span>C<span style="color:#f92672">&gt;</span> collectionFactory<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> CollectorImpl<span style="color:#f92672">&lt;&gt;(</span>collectionFactory<span style="color:#f92672">,</span> Collection<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>add<span style="color:#f92672">,</span>
+                               <span style="color:#f92672">(</span>r1<span style="color:#f92672">,</span> r2<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span> r1<span style="color:#f92672">.</span><span style="color:#a6e22e">addAll</span><span style="color:#f92672">(</span>r2<span style="color:#f92672">);</span> <span style="color:#66d9ef">return</span> r1<span style="color:#f92672">;</span> <span style="color:#f92672">},</span>
+                               CH_ID<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>根据自己需要创建集合</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">TreeSet<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> set <span style="color:#f92672">=</span> stream<span style="color:#f92672">.</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toCollection</span><span style="color:#f92672">(</span>TreeSet<span style="color:#f92672">::</span><span style="color:#66d9ef">new</span><span style="color:#f92672">));</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>set<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">());</span>
+set<span style="color:#f92672">.</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println<span style="color:#f92672">);</span>
+</code></pre></div><p>hello
+helloWorld!
+world</p>
+<p>**Collectors.joining（）**拼接stream中内容</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">String string <span style="color:#f92672">=</span> stream<span style="color:#f92672">.</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">joining</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34; &#34;</span><span style="color:#f92672">)).</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">();</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>string<span style="color:#f92672">);</span>
+
+
+</code></pre></div><p>hello world helloWorld!</p>
+<h4 id="18map">18.map()</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> list <span style="color:#f92672">=</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;hello&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;world&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;helloWorld&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;test&#34;</span><span style="color:#f92672">);</span>
+list<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>String<span style="color:#f92672">::</span>toUpperCase<span style="color:#f92672">).</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">()).</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println<span style="color:#f92672">);</span>
+List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> list1<span style="color:#f92672">=</span>Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span>1<span style="color:#f92672">,</span>2<span style="color:#f92672">,</span>34<span style="color:#f92672">,</span>5<span style="color:#f92672">,</span>6<span style="color:#f92672">);</span>
+list1<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>i<span style="color:#f92672">-&gt;</span>i<span style="color:#f92672">*</span>2<span style="color:#f92672">).</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">()).</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println<span style="color:#f92672">);</span>
+</code></pre></div><p>TEST
+2
+4
+68
+10
+12</p>
+<p><strong>flatMap()</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">&lt;</span>R<span style="color:#f92672">&gt;</span> Stream<span style="color:#f92672">&lt;</span>R<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">flatMap</span><span style="color:#f92672">(</span>Function<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">super</span> T<span style="color:#f92672">,</span> <span style="color:#f92672">?</span> <span style="color:#66d9ef">extends</span> Stream<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">extends</span> R<span style="color:#f92672">&gt;&gt;</span> mapper<span style="color:#f92672">);</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Stream<span style="color:#f92672">&lt;</span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;&gt;</span> stream <span style="color:#f92672">=</span> Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span>0<span style="color:#f92672">),</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span>1<span style="color:#f92672">,</span> 2<span style="color:#f92672">),</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span>3<span style="color:#f92672">,</span> 4<span style="color:#f92672">,</span> 5<span style="color:#f92672">,</span> 6<span style="color:#f92672">));</span>
+stream<span style="color:#f92672">.</span><span style="color:#a6e22e">flatMap</span><span style="color:#f92672">(</span>theList<span style="color:#f92672">-&gt;</span>theList<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">()).</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>i<span style="color:#f92672">-&gt;</span>i<span style="color:#f92672">*</span>i<span style="color:#f92672">).</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println<span style="color:#f92672">);</span>
+</code></pre></div><p>0
+1
+4
+9
+16
+25
+36</p>
+<h4 id="19generate">19.generate()</h4>
+<p><strong>generate</strong>根据<strong>Supplier</strong>获得对象得到带流</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> Stream<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">generate</span><span style="color:#f92672">(</span>Supplier<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> s<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">requireNonNull</span><span style="color:#f92672">(</span>s<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">return</span> StreamSupport<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">(</span>
+            <span style="color:#66d9ef">new</span> StreamSpliterators<span style="color:#f92672">.</span><span style="color:#a6e22e">InfiniteSupplyingSpliterator</span><span style="color:#f92672">.</span><span style="color:#a6e22e">OfRef</span><span style="color:#f92672">&lt;&gt;(</span>Long<span style="color:#f92672">.</span><span style="color:#a6e22e">MAX_VALUE</span><span style="color:#f92672">,</span> s<span style="color:#f92672">),</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Stream<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> stream <span style="color:#f92672">=</span> Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">generate</span><span style="color:#f92672">(</span>UUID<span style="color:#f92672">.</span><span style="color:#a6e22e">randomUUID</span><span style="color:#f92672">()::</span>toString<span style="color:#f92672">);</span>
+stream<span style="color:#f92672">.</span><span style="color:#a6e22e">findFirst</span><span style="color:#f92672">().</span><span style="color:#a6e22e">ifPresent</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println<span style="color:#f92672">);</span>
+</code></pre></div><p>01a7d356-448d-47f3-80b9-9c91e6eda6a7</p>
+<p><strong>iterate</strong>通过**种子（seed）**得到流</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Returns an infinite sequential ordered <span style="color:#f92672">{</span><span style="color:#a6e22e">@code</span> Stream<span style="color:#f92672">}</span> produced by iterative
+application of a function <span style="color:#f92672">{</span><span style="color:#a6e22e">@code</span> f<span style="color:#f92672">}</span> to an initial element <span style="color:#f92672">{</span><span style="color:#a6e22e">@code</span> seed<span style="color:#f92672">},</span>
+producing a <span style="color:#f92672">{</span><span style="color:#a6e22e">@code</span> Stream<span style="color:#f92672">}</span> consisting of <span style="color:#f92672">{</span><span style="color:#a6e22e">@code</span> seed<span style="color:#f92672">},</span> <span style="color:#f92672">{</span><span style="color:#a6e22e">@code</span> f<span style="color:#f92672">(</span>seed<span style="color:#f92672">)},</span>
+<span style="color:#f92672">{</span><span style="color:#a6e22e">@code</span> f<span style="color:#f92672">(</span>f<span style="color:#f92672">(</span>seed<span style="color:#f92672">))},</span> etc
+<span style="color:#f92672">&lt;</span>p<span style="color:#f92672">&gt;</span>The first <span style="color:#a6e22e">element</span> <span style="color:#f92672">(</span>position <span style="color:#f92672">{</span><span style="color:#a6e22e">@code</span> 0<span style="color:#f92672">})</span> in the <span style="color:#f92672">{</span><span style="color:#a6e22e">@code</span> Stream<span style="color:#f92672">}</span> will be
+the provided <span style="color:#f92672">{</span><span style="color:#a6e22e">@code</span> seed<span style="color:#f92672">}.</span>  For <span style="color:#f92672">{</span><span style="color:#a6e22e">@code</span> n <span style="color:#f92672">&gt;</span> 0<span style="color:#f92672">},</span> the element at position
+<span style="color:#f92672">{</span><span style="color:#a6e22e">@code</span> n<span style="color:#f92672">},</span> will be the result of applying the function <span style="color:#f92672">{</span><span style="color:#a6e22e">@code</span> f<span style="color:#f92672">}</span> to the
+element at position <span style="color:#f92672">{</span><span style="color:#a6e22e">@code</span> n <span style="color:#f92672">-</span> 1<span style="color:#f92672">}.</span>
+   简单来说就是得到一个无限串顺序流<span style="color:#960050;background-color:#1e0010">，</span>给定一个seed<span style="color:#960050;background-color:#1e0010">，</span>然后f作用于seed生成新的f<span style="color:#960050;background-color:#1e0010">（</span>seed<span style="color:#960050;background-color:#1e0010">）</span>无限循环下去
+   f<span style="color:#960050;background-color:#1e0010">（</span>f<span style="color:#f92672">(</span>seed<span style="color:#f92672">)</span><span style="color:#960050;background-color:#1e0010">）</span><span style="color:#f92672">...</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> Stream<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">iterate</span><span style="color:#f92672">(</span><span style="color:#66d9ef">final</span> T seed<span style="color:#f92672">,</span> <span style="color:#66d9ef">final</span> UnaryOperator<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> f<span style="color:#f92672">{</span>
+<span style="color:#f92672">...</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p><strong>UnaryOperator</strong>继承<strong>Function</strong>，得到一个元素返回相同类型元素</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">UnaryOperator</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">extends</span> Function<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">,</span> T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+    <span style="color:#f92672">...</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>因为是<strong>无限串行流</strong>，所以需要限制一下（<strong>limit</strong>）次数</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">iterate</span><span style="color:#f92672">(</span>2<span style="color:#f92672">,</span> item<span style="color:#f92672">-&gt;</span>item<span style="color:#f92672">*</span>2<span style="color:#f92672">).</span><span style="color:#a6e22e">limit</span><span style="color:#f92672">(</span>10<span style="color:#f92672">).</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println<span style="color:#f92672">);</span>
+</code></pre></div><p>2
+4
+8
+16
+32
+64
+128
+256
+512
+1024</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">int</span> sum <span style="color:#f92672">=</span> Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">iterate</span><span style="color:#f92672">(</span>1<span style="color:#f92672">,</span> item <span style="color:#f92672">-&gt;</span> item <span style="color:#f92672">+</span> 2<span style="color:#f92672">).</span><span style="color:#a6e22e">limit</span><span style="color:#f92672">(</span>6<span style="color:#f92672">).</span><span style="color:#a6e22e">filter</span><span style="color:#f92672">(</span>i <span style="color:#f92672">-&gt;</span> i <span style="color:#f92672">&gt;</span> 2<span style="color:#f92672">).</span><span style="color:#a6e22e">mapToInt</span><span style="color:#f92672">(</span>i <span style="color:#f92672">-&gt;</span> i <span style="color:#f92672">*</span> 2<span style="color:#f92672">).</span><span style="color:#a6e22e">skip</span><span style="color:#f92672">(</span>2<span style="color:#f92672">).</span><span style="color:#a6e22e">limit</span><span style="color:#f92672">(</span>2<span style="color:#f92672">).</span><span style="color:#a6e22e">sum</span><span style="color:#f92672">();</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;sum = &#34;</span> <span style="color:#f92672">+</span> sum<span style="color:#f92672">);</span>
+</code></pre></div><p>sum = 32</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">iterate</span><span style="color:#f92672">(</span>0<span style="color:#f92672">,</span> i<span style="color:#f92672">-&gt;(</span>i<span style="color:#f92672">+</span>1<span style="color:#f92672">)%</span>2<span style="color:#f92672">).</span><span style="color:#a6e22e">distinct</span><span style="color:#f92672">().</span><span style="color:#a6e22e">limit</span><span style="color:#f92672">(</span>6<span style="color:#f92672">).</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println<span style="color:#f92672">);</span>
+</code></pre></div><p>0
+1</p>
+<p><strong>distinct在前 程序没有终止</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">iterate</span><span style="color:#f92672">(</span>0<span style="color:#f92672">,</span> i<span style="color:#f92672">-&gt;(</span>i<span style="color:#f92672">+</span>1<span style="color:#f92672">)%</span>2<span style="color:#f92672">).</span><span style="color:#a6e22e">limit</span><span style="color:#f92672">(</span>6<span style="color:#f92672">).</span><span style="color:#a6e22e">distinct</span><span style="color:#f92672">().</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println<span style="color:#f92672">);</span>
+</code></pre></div><p>0
+1</p>
+<p>Process finished with exit code 0</p>
+<h4 id="20内部迭代和外部迭代的区别">20.内部迭代和外部迭代的区别</h4>
+<p>![1577349043663](JDK8 .assets/1577349043663.png)</p>
+<p>集合关注的是数据与数据存储本身，流关注的是数据的计算。</p>
+<p>流与迭代器类似的一点是：流是无法重复使用消费的</p>
+<h4 id="21习题去重">21.习题：去重</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> list <span style="color:#f92672">=</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;hello welcome&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;world hello&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;hello world hello&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;hello welcome&#34;</span><span style="color:#f92672">);</span>
+<span style="color:#75715e">//        list.stream().map(item-&gt;item.split(&#34; &#34;)).distinct().collect(Collectors.toList())
+</span><span style="color:#75715e">//                .forEach(System.out::println);
+</span><span style="color:#75715e"></span>        list<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>item<span style="color:#f92672">-&gt;</span>item<span style="color:#f92672">.</span><span style="color:#a6e22e">split</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34; &#34;</span><span style="color:#f92672">)).</span><span style="color:#a6e22e">flatMap</span><span style="color:#f92672">(</span>s<span style="color:#f92672">-&gt;</span>Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">(</span>s<span style="color:#f92672">))</span>
+                <span style="color:#f92672">.</span><span style="color:#a6e22e">distinct</span><span style="color:#f92672">().</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">()).</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println<span style="color:#f92672">);</span>
+</code></pre></div><p>hello
+welcome
+world</p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

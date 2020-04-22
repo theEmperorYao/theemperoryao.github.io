@@ -1,0 +1,953 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>深入理解JVM // My New Hugo Site</title>
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.67.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="John Doe" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://theemperoryao.github.io/css/main.min.f90f5edd436ec7b74ad05479a05705770306911f721193e7845948fb07fe1335.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="深入理解JVM"/>
+<meta name="twitter:description" content="深入理解JVM 类加载  在Java代码中，类型（不表示对象，可以理解为class）的加载、连接与初始化过程都是在程序运行期间完成的（类型大多数都是存在的，也有在运行期动态生成的，例如动态代理） 提供了更大的灵活性  类型的加载最常见的情况：将已经存在的类的class文件从磁盘加载到内存里。
+连接：将类与类之间的关系确定好，对于字节码之间的处理如验证，校验
+初始化：对于静态变量赋值
+类加载器
+加载类的工具
+ Java虚拟机与程序的生命周期 在如下几种情况下，Java虚拟机将结束生命周期  执行了System.exit()方法 程序正常执行结束 程序在执行过程中遇到了异常或者错误而异常终止 由于操作系统出现错误而导致Java虚拟机进程终止    助记符
+getstatic
+putstatic
+invokestatic
+MyTest1 /*** 对于静态字段来说，只有直接定义了该字段的类才会被初始化* 当一个类初始化时，要求其父类全部已经初始化完毕了*/public class MyTest1 {public static void main(String[] args) {System.out.println(MyChilde1.str);}}class MyParent1{public static String str =&#34;hello world&#34;;static{System.out.println(&#34;MyParent1 static block&#34;);}}class MyChilde1 extends MyParent1{public static String str2 = &#34;Welcome&#34;;static{System."/>
+
+    <meta property="og:title" content="深入理解JVM" />
+<meta property="og:description" content="深入理解JVM 类加载  在Java代码中，类型（不表示对象，可以理解为class）的加载、连接与初始化过程都是在程序运行期间完成的（类型大多数都是存在的，也有在运行期动态生成的，例如动态代理） 提供了更大的灵活性  类型的加载最常见的情况：将已经存在的类的class文件从磁盘加载到内存里。
+连接：将类与类之间的关系确定好，对于字节码之间的处理如验证，校验
+初始化：对于静态变量赋值
+类加载器
+加载类的工具
+ Java虚拟机与程序的生命周期 在如下几种情况下，Java虚拟机将结束生命周期  执行了System.exit()方法 程序正常执行结束 程序在执行过程中遇到了异常或者错误而异常终止 由于操作系统出现错误而导致Java虚拟机进程终止    助记符
+getstatic
+putstatic
+invokestatic
+MyTest1 /*** 对于静态字段来说，只有直接定义了该字段的类才会被初始化* 当一个类初始化时，要求其父类全部已经初始化完毕了*/public class MyTest1 {public static void main(String[] args) {System.out.println(MyChilde1.str);}}class MyParent1{public static String str =&#34;hello world&#34;;static{System.out.println(&#34;MyParent1 static block&#34;);}}class MyChilde1 extends MyParent1{public static String str2 = &#34;Welcome&#34;;static{System." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://theemperoryao.github.io/post/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3jvm/" />
+<meta property="article:published_time" content="2020-03-22T00:30:18+08:00" />
+<meta property="article:modified_time" content="2020-03-22T00:30:18+08:00" />
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://theemperoryao.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="John Doe" /></a>
+      <h1>My New Hugo Site</h1>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vehicula turpis sit amet elit pretium.</p>
+      <div class="app-header-social">
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">深入理解JVM</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Mar 22, 2020
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          11 min read
+        </div></div>
+    </header>
+    <div class="post-content">
+      <h3 id="深入理解jvm">深入理解JVM</h3>
+<h4 id="类加载">类加载</h4>
+<ul>
+<li>在Java代码中，类型（<strong>不表示对象</strong>，<strong>可以理解为class</strong>）的加载、连接与初始化过程都是在程序运行期间完成的（类型大多数都是存在的，也有在运行期动态生成的，例如<strong>动态代理</strong>）</li>
+<li>提供了更大的灵活性</li>
+</ul>
+<p>类型的加载最常见的情况：将已经存在的类的class文件从磁盘加载到内存里。</p>
+<p>连接：将类与类之间的关系确定好，对于字节码之间的处理如验证，校验</p>
+<p>初始化：对于静态变量赋值</p>
+<p><strong>类加载器</strong></p>
+<p>加载类的工具</p>
+<ul>
+<li>Java虚拟机与程序的生命周期</li>
+<li>在如下几种情况下，Java虚拟机将结束生命周期
+<ul>
+<li>执行了System.exit()方法</li>
+<li>程序正常执行结束</li>
+<li>程序在执行过程中遇到了异常或者错误而异常终止</li>
+<li>由于操作系统出现错误而导致Java虚拟机进程终止</li>
+</ul>
+</li>
+</ul>
+<p><img src="assets/1580912394205.png" alt="1580912394205"></p>
+<p><img src="http://static.jiebianjia.com/typora/b36fe46ed29364e1ef6a6fba7d7f3b22.png" alt="1580892578553"></p>
+<p><img src="http://static.jiebianjia.com/typora/5cc2c09c1eaa5ee50f460f897fa82537.png" alt="1580892918283"></p>
+<p><img src="http://static.jiebianjia.com/typora/77108ed85d3e498200e6ffbffabf37fe.png" alt="1580902129013"></p>
+<p><img src="http://static.jiebianjia.com/typora/72e8380457a852be965084d9cae66707.png" alt="1580902259871"></p>
+<p>助记符</p>
+<p>getstatic</p>
+<p>putstatic</p>
+<p>invokestatic</p>
+<p><img src="assets/1580912425579.png" alt="1580912425579"></p>
+<p><img src="http://static.jiebianjia.com/typora/3d845c8cbd794e962e7afc79108532ef.png" alt="1580902768530"></p>
+<p><img src="%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM.assets/1580902822495.png" alt="1580902822495"></p>
+<h5 id="mytest1">MyTest1</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 对于静态字段来说，只有直接定义了该字段的类才会被初始化
+</span><span style="color:#75715e"> * 当一个类初始化时，要求其父类全部已经初始化完毕了
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyTest1</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>MyChilde1<span style="color:#f92672">.</span><span style="color:#a6e22e">str</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+<span style="color:#f92672">}</span>
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyParent1</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> String str <span style="color:#f92672">=</span><span style="color:#e6db74">&#34;hello world&#34;</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">static</span><span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;MyParent1 static block&#34;</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyChilde1</span> <span style="color:#66d9ef">extends</span> MyParent1<span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> String str2 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Welcome&#34;</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">static</span><span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;MyChild static block&#34;</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>MyParent1 static block
+hello world</p>
+<p><strong>尽管是子类MyChild1调用了str但是确实父类定义的静态字段，所以只有MyParent1被初始化</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyTest1</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>MyChilde1<span style="color:#f92672">.</span><span style="color:#a6e22e">str2</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+<span style="color:#f92672">}</span>
+</code></pre></div><p>MyParent1 static block
+MyChild static block
+Welcome</p>
+<p><strong>初始化一个类的子类也属于主动使用，所以MyParent1先被初始化</strong></p>
+<h5 id="mytest2">MyTest2</h5>
+<p>-XX：+TraceClassLoading，用于追踪类的加载信息并打印出来</p>
+<p><strong>javap -c com.tang.jvm.classLoader.MyTest2</strong>  <strong>反编译</strong></p>
+<p><img src="http://static.jiebianjia.com/typora/bcb2c756783628fd9abb0552000882e4.png" alt="1580911473952"></p>
+<p><img src="http://static.jiebianjia.com/typora/22a4389edd00ce758b03b2e15ff41d76.png" alt="1580911530287"></p>
+<p><img src="http://static.jiebianjia.com/typora/74af3645001b978491141fc1234198e6.png" alt="1580912778366"></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 常量在编译阶段，常量就会被存入到调用常量的那个方法，所在的类的常量池（MyTest2）当中
+</span><span style="color:#75715e"> * 本质上，调用类（MyTest2）并没有直接引用到定义常量的类，因此不会被触发
+</span><span style="color:#75715e"> * 定义常量的类的初始化（所以MyParent2 static block不输出）
+</span><span style="color:#75715e"> * 注意：这里指的是将常量存放在MyTest2的常量池中，之后MyTest2与MyParent2就没有任何关系了
+</span><span style="color:#75715e"> * 甚至我们可以将MyParent2的class文件删除
+</span><span style="color:#75715e"> */</span>
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 助记符
+</span><span style="color:#75715e"> * ldc 表示将int，float或者是string类型的常量池中推送到栈顶
+</span><span style="color:#75715e"> * bipush表示将单字节（-128~127）的常量值推送至栈顶
+</span><span style="color:#75715e"> * sipush表示将短整型（-327689~32767）的常量值推送至栈顶 t_1表示将int类型1推送至栈顶     （iconst_m1~iconst_5）
+</span><span style="color:#75715e"> *iconst_m1 m为minus负数
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyTest2</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>MyParent2<span style="color:#f92672">.</span><span style="color:#a6e22e">m</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyParent2</span><span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String str <span style="color:#f92672">=</span><span style="color:#e6db74">&#34;hello world&#34;</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">short</span> s <span style="color:#f92672">=</span>7<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span>128<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">int</span> m <span style="color:#f92672">=</span>6<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">static</span><span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;MyParent2 static block&#34;</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h5 id="mytest3">MyTest3</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 当一个常量的值并非编译期间就可以确定的，那么其值就不会被放到调用类的常量池中，
+</span><span style="color:#75715e"> * 这是在程序运行时，会导致主动使用这个常量所在的类，显然会导致这个类被初始化。
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyTest3</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>MyParent3<span style="color:#f92672">.</span><span style="color:#a6e22e">str</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyParent3</span><span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String str<span style="color:#f92672">=</span> UUID<span style="color:#f92672">.</span><span style="color:#a6e22e">randomUUID</span><span style="color:#f92672">().</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">();</span>
+
+    <span style="color:#66d9ef">static</span><span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;MyParent3 static code&#34;</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>MyParent3 static code
+69d516f2-0b78-4c3a-98ac-6a187ddb7e74</p>
+<h5 id="mytest4">MyTest4</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 对于数组实例来说，其数据类型是由JVM在运行期动态生成的，表示为[Lcom.tang.jvm.classLoader.MyParent4
+</span><span style="color:#75715e"> * 这种形式。动态生成的类型，其父类型就是Object
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * 对于数组来说，JavaDoc经常将构成数组元素为Component，实际上就是将数组降低一个维度后的类型
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * 助记符
+</span><span style="color:#75715e"> * anewarray：表示创建一个引用类型（类，接口，数组）的数组，并将其引用值压入栈顶
+</span><span style="color:#75715e"> * newarray：表示创建一个指定的原始类型（int、float、char等）的数组，并将其引用值压入栈顶
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyTest4</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+<span style="color:#75715e">//        MyParent4 myParent4 = new MyParent4();
+</span><span style="color:#75715e"></span>        MyParent4<span style="color:#f92672">[]</span> myParent4s <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> MyParent4<span style="color:#f92672">[</span>1<span style="color:#f92672">];</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>myParent4s<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">());</span>
+
+        MyParent4<span style="color:#f92672">[][]</span> myParent4s1 <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> MyParent4<span style="color:#f92672">[</span>1<span style="color:#f92672">][</span>1<span style="color:#f92672">];</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>myParent4s1<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">());</span>
+
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>myParent4s<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getSuperclass</span><span style="color:#f92672">());</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>myParent4s1<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getSuperclass</span><span style="color:#f92672">());</span>
+
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;======&#34;</span><span style="color:#f92672">);</span>
+
+        <span style="color:#66d9ef">int</span><span style="color:#f92672">[]</span> ints<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span><span style="color:#f92672">[</span>1<span style="color:#f92672">];</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>ints<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">());</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>ints<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getSuperclass</span><span style="color:#f92672">());</span>
+
+        <span style="color:#66d9ef">char</span><span style="color:#f92672">[]</span> chars <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">char</span><span style="color:#f92672">[</span>1<span style="color:#f92672">];</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>chars<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">());</span>
+
+        <span style="color:#66d9ef">boolean</span><span style="color:#f92672">[]</span> booleans <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">boolean</span><span style="color:#f92672">[</span>1<span style="color:#f92672">];</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>booleans<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">());</span>
+
+        <span style="color:#66d9ef">short</span><span style="color:#f92672">[]</span> shorts <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">short</span><span style="color:#f92672">[</span>1<span style="color:#f92672">];</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>shorts<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">());</span>
+
+        <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> bytes <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">byte</span><span style="color:#f92672">[</span>1<span style="color:#f92672">];</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>bytes<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">());</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyParent4</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">static</span> <span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;MyParent4 static block&#34;</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>class [Lcom.tang.jvm.classLoader.MyParent4;
+class [[Lcom.tang.jvm.classLoader.MyParent4;
+class java.lang.Object</p>
+<p>class java.lang.Object</p>
+<p>class [I
+class java.lang.Object
+class [C
+class [Z
+class [S
+class [B</p>
+<h5 id="mytest5">MyTest5</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 当一个接口在初始化时，并不要求其父接口都完成了初始化
+</span><span style="color:#75715e"> * 只有在真正使用父接口的时候，（如引用接口中所定义的常量时），才会初始化
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyTest5</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#75715e">//System.out.println(MyChild5.b);//在初始化一个类时，并不会初始化他所实现的接口
+</span><span style="color:#75715e"></span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>MyParent5_1<span style="color:#f92672">.</span><span style="color:#a6e22e">thread1</span><span style="color:#f92672">);</span><span style="color:#75715e">//初始化一个接口时，并不会初始化他的父接口
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+<span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">MyParent5</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Thread thread<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Thread<span style="color:#f92672">(){</span>
+        <span style="color:#f92672">{</span>
+            System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;MyParent5 invoke&#34;</span><span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">};</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 在初始化一个类时，并不会初始化他所实现的接口
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyChild5</span> <span style="color:#66d9ef">implements</span> MyParent5<span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span>   <span style="color:#66d9ef">int</span> b<span style="color:#f92672">=</span>3<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e"> *初始化一个接口时，并不会初始化他的父接口
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">MyGrandPa5_1</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Thread thread1<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Thread<span style="color:#f92672">(){</span>
+        <span style="color:#f92672">{</span>
+            System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;MyGrandPa5_1 invoke&#34;</span><span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">};</span>
+<span style="color:#f92672">}</span>
+<span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">MyParent5_1</span> <span style="color:#66d9ef">extends</span> MyGrandPa5_1<span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Thread thread<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Thread<span style="color:#f92672">(){</span>
+        <span style="color:#f92672">{</span>
+            System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;MyParent5_1 invoke&#34;</span><span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">};</span>
+<span style="color:#f92672">}</span>
+
+</code></pre></div><p>[Loaded com.tang.jvm.classLoader.MyParent5 from file:/E:/Code/jdk8/out/production/classes/]
+[Loaded com.tang.jvm.classLoader.MyChild5 from file:/E:/Code/jdk8/out/production/classes/]
+[Loaded com.tang.jvm.classLoader.MyParent5$1 from file:/E:/Code/jdk8/out/production/classes/]</p>
+<p>3</p>
+<p>===================</p>
+<p>[Loaded com.tang.jvm.classLoader.MyParent5_1 from file:/E:/Code/jdk8/out/production/classes/]
+[Loaded java.net.Inet6Address$Inet6AddressHolder from C:\Program Files\Java\jdk1.8.0_201\jre\lib\rt.jar]
+[Loaded com.tang.jvm.classLoader.MyGrandPa5_1$1 from file:/E:/Code/jdk8/out/production/classes/]</p>
+<p>MyGrandPa5_1 invoke</p>
+<p>$1意思是匿名内部类</p>
+<h5 id="mytest6">MyTest6</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyTest6</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Singleton singleton <span style="color:#f92672">=</span> Singleton<span style="color:#f92672">.</span><span style="color:#a6e22e">getInstance</span><span style="color:#f92672">();</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>Singleton<span style="color:#f92672">.</span><span style="color:#a6e22e">count1</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>Singleton<span style="color:#f92672">.</span><span style="color:#a6e22e">count2</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Singleton</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> count1<span style="color:#f92672">=</span>1<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> Singleton singleton<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Singleton<span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Singleton</span><span style="color:#f92672">(){</span>
+        count1<span style="color:#f92672">++;</span>
+        count2<span style="color:#f92672">++;</span><span style="color:#75715e">//准备阶段的重要意义
+</span><span style="color:#75715e"></span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>count1<span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>count2<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> count2 <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Singleton <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(){</span>
+        <span style="color:#66d9ef">return</span> singleton<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>2
+1
+2
+0</p>
+<p>调用类的静态方法属于主动使用这个类，会初始化类，先准备再初始化，准备阶段，count1=0（默认值）</p>
+<p>singleton=null，count2=0（默认值）count1++为1，count2++为1，在初始化count2为0；</p>
+<p><img src="assets/1581066249998.png" alt="1581066249998"></p>
+<p><img src="assets/1581066677610.png" alt="1581066677610"></p>
+<p><img src="assets/1581066730390.png" alt="1581066730390"></p>
+<p><img src="assets/1581066964622.png" alt="1581066964622"></p>
+<p>详情看MyTest1中 MYChild1被加载但是没被实例化</p>
+<p><img src="assets/1581067176656.png" alt="1581067176656"></p>
+<p><img src="assets/1581068678521.png" alt="1581068678521"></p>
+<p><img src="assets/1581068702674.png" alt="1581068702674"></p>
+<p><img src="assets/1581068774222.png" alt="1581068774222"></p>
+<p><img src="assets/1581068876455.png" alt="1581068876455"></p>
+<p><img src="assets/1581068908024.png" alt="1581068908024"></p>
+<p><img src="assets/1581069047627.png" alt="1581069047627"></p>
+<p><img src="http://static.jiebianjia.com/typora/4d8ddd092fa9632c67568f9eed856ad2.png" alt="1581069191987"></p>
+<h5 id="类的初始化">类的初始化</h5>
+<blockquote>
+<p>初始化阶段就是执行类构造器<!-- raw HTML omitted -->()方法的过程，<!-- raw HTML omitted -->()并不是程序员在Java代码中直接编写的方法，它是Javac编译器的自动生成物（深入理解Java虚拟机 第三版）</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> *·&lt;clinit&gt;()方法是由编译器自动收集类中的所有类变量的赋值动作和静态语句块(static{}块)中的 语句合并产生的，
+</span><span style="color:#75715e"> * 编译器收集的顺序是由语句在源文件中出现的顺序决定的，静态语句块中只能访问 到定义在静态语句块之前的变量，
+</span><span style="color:#75715e"> * 定义在它之后的变量，在前面的静态语句块可以赋值，但是不能访问
+</span><span style="color:#75715e"> * 
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">InitTest1</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">static</span> <span style="color:#f92672">{</span>
+        i<span style="color:#f92672">=</span>0<span style="color:#f92672">;</span>
+        <span style="color:#75715e">//Illegal forward reference 非法向前引用
+</span><span style="color:#75715e"></span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>i<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span>1<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p><img src="assets/1581069252637.png" alt="1581069252637"></p>
+<p><img src="assets/1581069279522.png" alt="1581069279522"></p>
+<p><img src="assets/1581069381126.png" alt="1581069381126"></p>
+<h5 id="类加载器的父亲委托机制">类加载器的父亲委托机制</h5>
+<p><img src="http://static.jiebianjia.com/typora/b2c7dba3bf8b8c47fee0d8ba0b19f53d.png" alt="1581069394216"></p>
+<p><img src="http://static.jiebianjia.com/typora/83cd7f4c1304a935eed4364c7d370365.png" alt="1581086286324"></p>
+<p><img src="http://static.jiebianjia.com/typora/f6843812a34990110f77649112c9f4de.png" alt="1581086449259"></p>
+<p><img src="http://static.jiebianjia.com/typora/cfbeab75b347ba12181c9a6ff103a924.png" alt="1581086532210"></p>
+<p><img src="assets/1581086969708.png" alt="1581086969708"></p>
+<p><img src="assets/1581087029652.png" alt="1581087029652"></p>
+<h5 id="mytest7">MyTest7</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyTest7</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> ClassNotFoundException <span style="color:#f92672">{</span>
+        Class<span style="color:#f92672">&lt;?&gt;</span> clazz<span style="color:#f92672">=</span>Class<span style="color:#f92672">.</span><span style="color:#a6e22e">forName</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;java.lang.String&#34;</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>clazz<span style="color:#f92672">.</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">());</span>
+        Class<span style="color:#f92672">&lt;?&gt;</span> clazz2<span style="color:#f92672">=</span>Class<span style="color:#f92672">.</span><span style="color:#a6e22e">forName</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;com.tang.jvm.classLoader.C&#34;</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>clazz2<span style="color:#f92672">.</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">());</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">C</span><span style="color:#f92672">{</span>
+
+<span style="color:#f92672">}</span>
+</code></pre></div><p>null
+sun.misc.Launcher$AppClassLoader@18b4aac2</p>
+<h5 id="mytest8">MyTest8</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FinalTest</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">int</span> x<span style="color:#f92672">=</span>3<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">static</span> <span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;FinalTest static block&#34;</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyTest8</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>FinalTest<span style="color:#f92672">.</span><span style="color:#a6e22e">x</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p><strong>反编译</strong></p>
+<p>iconst_3</p>
+<p>说明直接把3储存到MyTest8的常量池中啦</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">int</span> x<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Random<span style="color:#f92672">().</span><span style="color:#a6e22e">nextInt</span><span style="color:#f92672">(</span>3<span style="color:#f92672">);</span>
+</code></pre></div><p>3: getstatic     #3                  // Field com/tang/jvm/classLoader/FinalTest.x:I</p>
+<p>说明引用了FinalTest里面的x静态成员变量，因为在编译器无法确定x的值，只能在运行期的时候引用静态成员变量x,是对类的主动使用，导致类的初始化，静态代码块会执行，输出FinalTest static block</p>
+<h5 id="mytest12">MyTest12</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CL</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">static</span> <span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Class CL&#34;</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 反射会初始化类
+</span><span style="color:#75715e"> * 调用ClassLoader类的loadClass方法加载一个类，并不是对类的主动使用，不会导致类的初始化
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyTest12</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> ClassNotFoundException <span style="color:#f92672">{</span>
+        ClassLoader loader <span style="color:#f92672">=</span> ClassLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">getSystemClassLoader</span><span style="color:#f92672">();</span>
+        Class<span style="color:#f92672">&lt;?&gt;</span> aClass <span style="color:#f92672">=</span> loader<span style="color:#f92672">.</span><span style="color:#a6e22e">loadClass</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;com.tang.jvm.classLoader.CL&#34;</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>aClass<span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;==============&#34;</span><span style="color:#f92672">);</span>
+        aClass<span style="color:#f92672">=</span> Class<span style="color:#f92672">.</span><span style="color:#a6e22e">forName</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;com.tang.jvm.classLoader.CL&#34;</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;aClass = &#34;</span> <span style="color:#f92672">+</span> aClass<span style="color:#f92672">);</span>
+
+
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h5 id="mytest13">MyTest13</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyTest13</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        ClassLoader loader <span style="color:#f92672">=</span> ClassLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">getSystemClassLoader</span><span style="color:#f92672">();</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>loader<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">while</span><span style="color:#f92672">(</span><span style="color:#66d9ef">null</span><span style="color:#f92672">!=</span>loader<span style="color:#f92672">){</span>
+             loader <span style="color:#f92672">=</span> loader<span style="color:#f92672">.</span><span style="color:#a6e22e">getParent</span><span style="color:#f92672">();</span>
+            System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>loader<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>sun.misc.Launcher$AppClassLoader@18b4aac2</p>
+<p>sun.misc.Launcher$ExtClassLoader@677327b6</p>
+<p>null</p>
+<h5 id="mytest14">MyTest14</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyTest14</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+        ClassLoader classLoader<span style="color:#f92672">=</span>Thread<span style="color:#f92672">.</span><span style="color:#a6e22e">currentThread</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getContextClassLoader</span><span style="color:#f92672">();</span>
+        String resourceName<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;com/tang/jvm/classloader/MyTest13.class&#34;</span><span style="color:#f92672">;</span>
+        Enumeration<span style="color:#f92672">&lt;</span>URL<span style="color:#f92672">&gt;</span> urls<span style="color:#f92672">=</span>classLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">getResources</span><span style="color:#f92672">(</span>resourceName<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span>urls<span style="color:#f92672">.</span><span style="color:#a6e22e">hasMoreElements</span><span style="color:#f92672">()){</span>
+            URL url <span style="color:#f92672">=</span> urls<span style="color:#f92672">.</span><span style="color:#a6e22e">nextElement</span><span style="color:#f92672">();</span>
+            System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>url<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>file:/E:/Code/jdk8/out/production/classes/com/tang/jvm/classloader/MyTest13.class</p>
+<p><img src="http://static.jiebianjia.com/typora/439f9a78274e95f258dba87194c02dca.png" alt="1581163606888"></p>
+<p>MyTest15</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyTest15</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        String<span style="color:#f92672">[]</span> strings <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> String<span style="color:#f92672">[</span>1<span style="color:#f92672">];</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>strings<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">());</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;------------&#34;</span><span style="color:#f92672">);</span>
+        MyTest15<span style="color:#f92672">[]</span> myTest15s<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> MyTest15<span style="color:#f92672">[</span>1<span style="color:#f92672">];</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>myTest15s<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">());</span>
+        <span style="color:#66d9ef">int</span><span style="color:#f92672">[]</span> ints<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span><span style="color:#f92672">[</span>1<span style="color:#f92672">];</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>ints<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">());</span>
+    <span style="color:#f92672">}</span>
+
+<span style="color:#f92672">}</span>
+</code></pre></div><p>null</p>
+<p>sun.misc.Launcher$AppClassLoader@18b4aac2
+null</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * A class loader is an object that is responsible for loading classes. The
+</span><span style="color:#75715e"> * class &lt;tt&gt;ClassLoader&lt;/tt&gt; is an abstract class.  Given the &lt;a
+</span><span style="color:#75715e"> * href=&#34;#name&#34;&gt;binary name&lt;/a&gt; of a class, a class loader should attempt to
+</span><span style="color:#75715e"> * locate or generate data that constitutes a definition for the class.  A
+</span><span style="color:#75715e"> * typical strategy is to transform the name into a file name and then read a
+</span><span style="color:#75715e"> * &#34;class file&#34; of that name from a file system.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;p&gt; Every {@link Class &lt;tt&gt;Class&lt;/tt&gt;} object contains a {@link
+</span><span style="color:#75715e"> * Class#getClassLoader() reference} to the &lt;tt&gt;ClassLoader&lt;/tt&gt; that defined
+</span><span style="color:#75715e"> * it.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;p&gt; &lt;tt&gt;Class&lt;/tt&gt; objects for array classes are not created by class
+</span><span style="color:#75715e"> * loaders, but are created automatically as required by the Java runtime.
+</span><span style="color:#75715e"> * The class loader for an array class, as returned by {@link
+</span><span style="color:#75715e"> * Class#getClassLoader()} is the same as the class loader for its element
+</span><span style="color:#75715e"> * type; if the element type is a primitive type, then the array class has no
+</span><span style="color:#75715e"> * class loader.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;p&gt; Applications implement subclasses of &lt;tt&gt;ClassLoader&lt;/tt&gt; in order to
+</span><span style="color:#75715e"> * extend the manner in which the Java virtual machine dynamically loads
+</span><span style="color:#75715e"> * classes.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;p&gt; Class loaders may typically be used by security managers to indicate
+</span><span style="color:#75715e"> * security domains.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;p&gt; The &lt;tt&gt;ClassLoader&lt;/tt&gt; class uses a delegation model to search for
+</span><span style="color:#75715e"> * classes and resources.  Each instance of &lt;tt&gt;ClassLoader&lt;/tt&gt; has an
+</span><span style="color:#75715e"> * associated parent class loader.  When requested to find a class or
+</span><span style="color:#75715e"> * resource, a &lt;tt&gt;ClassLoader&lt;/tt&gt; instance will delegate the search for the
+</span><span style="color:#75715e"> * class or resource to its parent class loader before attempting to find the
+</span><span style="color:#75715e"> * class or resource itself.  The virtual machine&#39;s built-in class loader,
+</span><span style="color:#75715e"> * called the &#34;bootstrap class loader&#34;, does not itself have a parent but may
+</span><span style="color:#75715e"> * serve as the parent of a &lt;tt&gt;ClassLoader&lt;/tt&gt; instance.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;p&gt; Class loaders that support concurrent loading of classes are known as
+</span><span style="color:#75715e"> * &lt;em&gt;parallel capable&lt;/em&gt; class loaders and are required to register
+</span><span style="color:#75715e"> * themselves at their class initialization time by invoking the
+</span><span style="color:#75715e"> * {@link
+</span><span style="color:#75715e"> * #registerAsParallelCapable &lt;tt&gt;ClassLoader.registerAsParallelCapable&lt;/tt&gt;}
+</span><span style="color:#75715e"> * method. Note that the &lt;tt&gt;ClassLoader&lt;/tt&gt; class is registered as parallel
+</span><span style="color:#75715e"> * capable by default. However, its subclasses still need to register themselves
+</span><span style="color:#75715e"> * if they are parallel capable. &lt;br&gt;
+</span><span style="color:#75715e"> * In environments in which the delegation model is not strictly
+</span><span style="color:#75715e"> * hierarchical, class loaders need to be parallel capable, otherwise class
+</span><span style="color:#75715e"> * loading can lead to deadlocks because the loader lock is held for the
+</span><span style="color:#75715e"> * duration of the class loading process (see {@link #loadClass
+</span><span style="color:#75715e"> * &lt;tt&gt;loadClass&lt;/tt&gt;} methods).
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;p&gt; Normally, the Java virtual machine loads classes from the local file
+</span><span style="color:#75715e"> * system in a platform-dependent manner.  For example, on UNIX systems, the
+</span><span style="color:#75715e"> * virtual machine loads classes from the directory defined by the
+</span><span style="color:#75715e"> * &lt;tt&gt;CLASSPATH&lt;/tt&gt; environment variable.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;p&gt; However, some classes may not originate from a file; they may originate
+</span><span style="color:#75715e"> * from other sources, such as the network, or they could be constructed by an
+</span><span style="color:#75715e"> * application.  The method {@link #defineClass(String, byte[], int, int)
+</span><span style="color:#75715e"> * &lt;tt&gt;defineClass&lt;/tt&gt;} converts an array of bytes into an instance of class
+</span><span style="color:#75715e"> * &lt;tt&gt;Class&lt;/tt&gt;. Instances of this newly defined class can be created using
+</span><span style="color:#75715e"> * {@link Class#newInstance &lt;tt&gt;Class.newInstance&lt;/tt&gt;}.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;p&gt; The methods and constructors of objects created by a class loader may
+</span><span style="color:#75715e"> * reference other classes.  To determine the class(es) referred to, the Java
+</span><span style="color:#75715e"> * virtual machine invokes the {@link #loadClass &lt;tt&gt;loadClass&lt;/tt&gt;} method of
+</span><span style="color:#75715e"> * the class loader that originally created the class.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;p&gt; For example, an application could create a network class loader to
+</span><span style="color:#75715e"> * download class files from a server.  Sample code might look like:
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;blockquote&gt;&lt;pre&gt;
+</span><span style="color:#75715e"> *   ClassLoader loader&amp;nbsp;= new NetworkClassLoader(host,&amp;nbsp;port);
+</span><span style="color:#75715e"> *   Object main&amp;nbsp;= loader.loadClass(&#34;Main&#34;, true).newInstance();
+</span><span style="color:#75715e"> *       &amp;nbsp;.&amp;nbsp;.&amp;nbsp;.
+</span><span style="color:#75715e"> * &lt;/pre&gt;&lt;/blockquote&gt;
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;p&gt; The network class loader subclass must define the methods {@link
+</span><span style="color:#75715e"> * #findClass &lt;tt&gt;findClass&lt;/tt&gt;} and &lt;tt&gt;loadClassData&lt;/tt&gt; to load a class
+</span><span style="color:#75715e"> * from the network.  Once it has downloaded the bytes that make up the class,
+</span><span style="color:#75715e"> * it should use the method {@link #defineClass &lt;tt&gt;defineClass&lt;/tt&gt;} to
+</span><span style="color:#75715e"> * create a class instance.  A sample implementation is:
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;blockquote&gt;&lt;pre&gt;
+</span><span style="color:#75715e"> *     class NetworkClassLoader extends ClassLoader {
+</span><span style="color:#75715e"> *         String host;
+</span><span style="color:#75715e"> *         int port;
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> *         public Class findClass(String name) {
+</span><span style="color:#75715e"> *             byte[] b = loadClassData(name);
+</span><span style="color:#75715e"> *             return defineClass(name, b, 0, b.length);
+</span><span style="color:#75715e"> *         }
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> *         private byte[] loadClassData(String name) {
+</span><span style="color:#75715e"> *             // load the class data from the connection
+</span><span style="color:#75715e"> *             &amp;nbsp;.&amp;nbsp;.&amp;nbsp;.
+</span><span style="color:#75715e"> *         }
+</span><span style="color:#75715e"> *     }
+</span><span style="color:#75715e"> * &lt;/pre&gt;&lt;/blockquote&gt;
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;h3&gt; &lt;a name=&#34;name&#34;&gt;Binary names&lt;/a&gt; &lt;/h3&gt;
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;p&gt; Any class name provided as a {@link String} parameter to methods in
+</span><span style="color:#75715e"> * &lt;tt&gt;ClassLoader&lt;/tt&gt; must be a binary name as defined by
+</span><span style="color:#75715e"> * &lt;cite&gt;The Java&amp;trade; Language Specification&lt;/cite&gt;.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * &lt;p&gt; Examples of valid class names include:
+</span><span style="color:#75715e"> * &lt;blockquote&gt;&lt;pre&gt;
+</span><span style="color:#75715e"> *   &#34;java.lang.String&#34;
+</span><span style="color:#75715e"> *   &#34;javax.swing.JSpinner$DefaultEditor&#34;
+</span><span style="color:#75715e"> *   &#34;java.security.KeyStore$Builder$FileBuilder$1&#34;
+</span><span style="color:#75715e"> *   &#34;java.net.URLClassLoader$3$1&#34;
+</span><span style="color:#75715e"> * &lt;/pre&gt;&lt;/blockquote&gt;
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * @see      #resolveClass(Class)
+</span><span style="color:#75715e"> * @since 1.0
+</span><span style="color:#75715e"> */</span>
+</code></pre></div><h5 id="mytest16自己写一个类加载器">MyTest16（自己写一个类加载器）</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyTest16</span> <span style="color:#66d9ef">extends</span> ClassLoader <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">private</span> String classLoaderName<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> String path<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> String fileExtension <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;.class&#34;</span><span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">MyTest16</span><span style="color:#f92672">(</span>String classLoaderName<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">super</span><span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">classLoaderName</span> <span style="color:#f92672">=</span> classLoaderName<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setPath</span><span style="color:#f92672">(</span>String path<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">path</span> <span style="color:#f92672">=</span> path<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">MyTest16</span><span style="color:#f92672">(</span>ClassLoader parent<span style="color:#f92672">,</span> String classLoaderName<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">super</span><span style="color:#f92672">(</span>parent<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">classLoaderName</span> <span style="color:#f92672">=</span> classLoaderName<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">protected</span> Class<span style="color:#f92672">&lt;?&gt;</span> findClass<span style="color:#f92672">(</span>String name<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> ClassNotFoundException <span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;finalClass invoke:&#34;</span><span style="color:#f92672">+</span>name<span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;classloadername:&#34;</span><span style="color:#f92672">+</span>classLoaderName<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> b <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">byte</span><span style="color:#f92672">[</span>0<span style="color:#f92672">];</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+            b <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">loadClassDate</span><span style="color:#f92672">(</span>name<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+        <span style="color:#f92672">}</span>
+
+        <span style="color:#66d9ef">return</span> defineClass<span style="color:#f92672">(</span>name<span style="color:#f92672">,</span> b<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> b<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> <span style="color:#a6e22e">loadClassDate</span><span style="color:#f92672">(</span>String className<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+        InputStream is <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+        ByteArrayOutputStream baos <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> date <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">int</span> ch<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+            className<span style="color:#f92672">=</span>className<span style="color:#f92672">.</span><span style="color:#a6e22e">replace</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;.&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;\\&#34;</span><span style="color:#f92672">);</span>
+            System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>className<span style="color:#f92672">);</span>
+            is <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FileInputStream<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> File<span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">path</span><span style="color:#f92672">+</span>className <span style="color:#f92672">+</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">fileExtension</span><span style="color:#f92672">));</span>
+            baos <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ByteArrayOutputStream<span style="color:#f92672">();</span>
+            <span style="color:#66d9ef">while</span> <span style="color:#f92672">(-</span>1 <span style="color:#f92672">!=</span> <span style="color:#f92672">(</span>ch <span style="color:#f92672">=</span> is<span style="color:#f92672">.</span><span style="color:#a6e22e">read</span><span style="color:#f92672">()))</span> <span style="color:#f92672">{</span>
+                baos<span style="color:#f92672">.</span><span style="color:#a6e22e">write</span><span style="color:#f92672">(</span>ch<span style="color:#f92672">);</span>
+            <span style="color:#f92672">}</span>
+            date <span style="color:#f92672">=</span> baos<span style="color:#f92672">.</span><span style="color:#a6e22e">toByteArray</span><span style="color:#f92672">();</span>
+            <span style="color:#66d9ef">return</span> date<span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>FileNotFoundException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">finally</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+                baos<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+                is<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                e<span style="color:#f92672">.</span><span style="color:#a6e22e">getStackTrace</span><span style="color:#f92672">();</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> date<span style="color:#f92672">;</span>
+
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">toString</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;MyTest16{&#34;</span> <span style="color:#f92672">+</span>
+                <span style="color:#e6db74">&#34;classLoaderName=&#39;&#34;</span> <span style="color:#f92672">+</span> classLoaderName <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;\&#39;&#39;</span> <span style="color:#f92672">+</span>
+                <span style="color:#e6db74">&#34;, fileExtension=&#39;&#34;</span> <span style="color:#f92672">+</span> fileExtension <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;\&#39;&#39;</span> <span style="color:#f92672">+</span>
+                <span style="color:#e6db74">&#39;}&#39;</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> IllegalAccessException<span style="color:#f92672">,</span> InstantiationException<span style="color:#f92672">,</span> ClassNotFoundException <span style="color:#f92672">{</span>
+        MyTest16 loader1 <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> MyTest16<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;classLoader1&#34;</span><span style="color:#f92672">);</span>
+        loader1<span style="color:#f92672">.</span><span style="color:#a6e22e">setPath</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;d:\\360MoveData\\Users\\10136\\Desktop\\&#34;</span><span style="color:#f92672">);</span>
+        Class<span style="color:#f92672">&lt;?&gt;</span> aClass <span style="color:#f92672">=</span> loader1<span style="color:#f92672">.</span><span style="color:#a6e22e">loadClass</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;com.tang.jvm.classloader.MyTest2&#34;</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>aClass<span style="color:#f92672">.</span><span style="color:#a6e22e">hashCode</span><span style="color:#f92672">());</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>aClass<span style="color:#f92672">);</span>
+        Object object <span style="color:#f92672">=</span> aClass<span style="color:#f92672">.</span><span style="color:#a6e22e">newInstance</span><span style="color:#f92672">();</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>object<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">());</span>
+
+        MyTest16 loader2 <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> MyTest16<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;classLoader2&#34;</span><span style="color:#f92672">);</span>
+        loader2<span style="color:#f92672">.</span><span style="color:#a6e22e">setPath</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;d:\\360MoveData\\Users\\10136\\Desktop\\&#34;</span><span style="color:#f92672">);</span>
+        Class<span style="color:#f92672">&lt;?&gt;</span> aClass2 <span style="color:#f92672">=</span> loader2<span style="color:#f92672">.</span><span style="color:#a6e22e">loadClass</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;com.tang.jvm.classloader.MyTest2&#34;</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>aClass2<span style="color:#f92672">.</span><span style="color:#a6e22e">hashCode</span><span style="color:#f92672">());</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>aClass2<span style="color:#f92672">);</span>
+        Object object2 <span style="color:#f92672">=</span> aClass2<span style="color:#f92672">.</span><span style="color:#a6e22e">newInstance</span><span style="color:#f92672">();</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>object2<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">());</span>
+
+    <span style="color:#f92672">}</span>
+
+<span style="color:#f92672">}</span>
+
+</code></pre></div><p>finalClass invoke:com.tang.jvm.classloader.MyTest2
+classloadername:classLoader1
+com\tang\jvm\classloader\MyTest2
+2133927002
+class com.tang.jvm.classloader.MyTest2
+MyTest16{classLoaderName='classLoader1&rsquo;, fileExtension=&rsquo;.class&rsquo;}
+finalClass invoke:com.tang.jvm.classloader.MyTest2
+classloadername:classLoader2
+com\tang\jvm\classloader\MyTest2
+1173230247
+class com.tang.jvm.classloader.MyTest2
+MyTest16{classLoaderName='classLoader2&rsquo;, fileExtension=&rsquo;.class&rsquo;}</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Class<span style="color:#f92672">&lt;?&gt;</span> aClass2 <span style="color:#f92672">=</span> loader2<span style="color:#f92672">.</span><span style="color:#a6e22e">loadClass</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;com.tang.jvm.classloader.MyTest2&#34;</span><span style="color:#f92672">);</span>
+</code></pre></div><p>2133927002</p>
+<p>2133927002</p>
+<p>哈希值相同</p>
+<p><img src="assets/1581317960355.png" alt="1581317960355"></p>
+<p><img src="assets/1581331214835.png" alt="1581331214835"></p>
+<p><img src="http://static.jiebianjia.com/typora/af9fc841594d0afd0c6aae0421dd283a.png" alt="1581331300395"></p>
+<p><img src="assets/1581331351701.png" alt="1581331351701"></p>
+<h5 id="mytest17_1">MyTest17_1</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 关于命名空间的重要说明
+</span><span style="color:#75715e"> * 1.子加载器所加载的类能够访问父加载器所加载的类
+</span><span style="color:#75715e"> * 2.父加载器所加载的类无法访问到子加载器所加载的类
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyTest17_1</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> ClassNotFoundException<span style="color:#f92672">,</span> IllegalAccessException<span style="color:#f92672">,</span> InstantiationException <span style="color:#f92672">{</span>
+        MyTest16 loader1<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> MyTest16<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;classloader1&#34;</span><span style="color:#f92672">);</span>
+        loader1<span style="color:#f92672">.</span><span style="color:#a6e22e">setPath</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;d:\\360MoveData\\Users\\10136\\Desktop\\&#34;</span><span style="color:#f92672">);</span>
+        Class<span style="color:#f92672">&lt;?&gt;</span> aClass <span style="color:#f92672">=</span> loader1<span style="color:#f92672">.</span><span style="color:#a6e22e">loadClass</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;com.tang.jvm.classloader.MySample&#34;</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>aClass<span style="color:#f92672">.</span><span style="color:#a6e22e">hashCode</span><span style="color:#f92672">());</span>
+        Object object <span style="color:#f92672">=</span> aClass<span style="color:#f92672">.</span><span style="color:#a6e22e">newInstance</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyCat</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">MyCat</span><span style="color:#f92672">(){</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;MyCat is loaded by:&#34;</span><span style="color:#f92672">+</span><span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">());</span>
+<span style="color:#75715e">//        System.out.println(&#34;from MyCat&#34;+MySample.class);
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MySample</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">MySample</span><span style="color:#f92672">(){</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Mysample is loaded by:&#34;</span><span style="color:#f92672">+</span><span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">());</span>
+        <span style="color:#66d9ef">new</span> MyCat<span style="color:#f92672">();</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;from MySample:&#34;</span><span style="color:#f92672">+</span>MyCat<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p><img src="assets/1581421334418.png" alt="1581421334418"></p>
+<p><img src="http://static.jiebianjia.com/typora/444c0eb2dd5980ab2568350bc62cd64e.png" alt="1581421345246"></p>
+<p><img src="http://static.jiebianjia.com/typora/df42f07350b718cc24d8684f3851bbd1.png" alt="1581421260337"></p>
+<p><img src="assets/1581421511492.png" alt="1581421511492"></p>
+<p><img src="http://static.jiebianjia.com/typora/ab500999568b4693a9d81ddaa077d086.png" alt="1581421997832"></p>
+<p><img src="http://static.jiebianjia.com/typora/4a139526f3f8cacadb4b37a6dcdb6d17.png" alt="1581421980927"></p>
+<p><img src="http://static.jiebianjia.com/typora/0291076ffcbbb59bb93ae37e4a266d78.png" alt="1581433842601"></p>
+<h5 id="mytest21">MyTest21</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyPerson</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">private</span> MyPerson myPerson<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setPerson</span><span style="color:#f92672">(</span>Object object<span style="color:#f92672">){</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">myPerson</span><span style="color:#f92672">=(</span>MyPerson<span style="color:#f92672">)</span> object<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 类加载器的双亲委托模型的好处
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * 1.可以确保Java核心库的类型安全，所有的Java应用都至少引用了java.lang.Object类，也就是说在运行期，java.lang.Object
+</span><span style="color:#75715e"> * 这个类会被加载到Java虚拟机中，如果这个加载过程是由Java应用自己的类加载器所完成的，那么很可能就会在JVM中存在多个版本的
+</span><span style="color:#75715e"> * java.lang.Object类，而且这些类之间还是不兼容的，相互不可见的（正是命名空间在发挥着作用）
+</span><span style="color:#75715e"> * 借助双亲委托机制，Java核心类库中的类的加载工作都是由启动类加载器统一完成，从而确保了Java应用所使用的都是同一个版本的
+</span><span style="color:#75715e"> * Java核心类库，他们之间是相互兼容的。
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * 2.可以确保Java核心类库所提供的类不会被自定义的类所代替。
+</span><span style="color:#75715e"> * 3.不同的类加载器可以为相同名称（binary name）的类创建额外的命名空间。相同名称的类可以并存在Java虚拟机中，只需要不同的
+</span><span style="color:#75715e"> * 类加载器来加载他们即可。不同类加载器所加载的类之间是不兼容的，这就相当于在Java虚拟机内部创建了一个又一个相互隔离的Java
+</span><span style="color:#75715e"> * 类空间，这类技术在很多框架中都得到了实际应用。
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyTest21</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> ClassNotFoundException<span style="color:#f92672">,</span> IllegalAccessException<span style="color:#f92672">,</span> InstantiationException<span style="color:#f92672">,</span> NoSuchMethodException<span style="color:#f92672">,</span> InvocationTargetException <span style="color:#f92672">{</span>
+        MyTest16 loader1 <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> MyTest16<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;loader1&#34;</span><span style="color:#f92672">);</span>
+        MyTest16 loader2 <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> MyTest16<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;loader2&#34;</span><span style="color:#f92672">);</span>
+
+        loader1<span style="color:#f92672">.</span><span style="color:#a6e22e">setPath</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;d:\\360MoveData\\Users\\10136\\Desktop\\&#34;</span><span style="color:#f92672">);</span>
+        loader2<span style="color:#f92672">.</span><span style="color:#a6e22e">setPath</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;d:\\360MoveData\\Users\\10136\\Desktop\\&#34;</span><span style="color:#f92672">);</span>
+
+        Class<span style="color:#f92672">&lt;?&gt;</span> clazz1 <span style="color:#f92672">=</span> loader1<span style="color:#f92672">.</span><span style="color:#a6e22e">loadClass</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;com.tang.jvm.classloader.MyPerson&#34;</span><span style="color:#f92672">);</span>
+        Class<span style="color:#f92672">&lt;?&gt;</span> clazz2 <span style="color:#f92672">=</span> loader2<span style="color:#f92672">.</span><span style="color:#a6e22e">loadClass</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;com.tang.jvm.classloader.MyPerson&#34;</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>clazz1<span style="color:#f92672">==</span>clazz2<span style="color:#f92672">);</span>
+
+        Object object1 <span style="color:#f92672">=</span> clazz1<span style="color:#f92672">.</span><span style="color:#a6e22e">newInstance</span><span style="color:#f92672">();</span>
+        Object object2 <span style="color:#f92672">=</span> clazz2<span style="color:#f92672">.</span><span style="color:#a6e22e">newInstance</span><span style="color:#f92672">();</span>
+		
+        Method method <span style="color:#f92672">=</span> clazz1<span style="color:#f92672">.</span><span style="color:#a6e22e">getMethod</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;setPerson&#34;</span><span style="color:#f92672">,</span>Object<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+        <span style="color:#75715e">//因为类加载器loader1和loader2命名空间不同，所以其生成Class对象是不能相互访问的
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//通过反射实例化的对象自然也互相访问不到
+</span><span style="color:#75715e"></span>        method<span style="color:#f92672">.</span><span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>object1<span style="color:#f92672">,</span> object2<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">finalClass invoke<span style="color:#f92672">:</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">tang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">jvm</span><span style="color:#f92672">.</span><span style="color:#a6e22e">classloader</span><span style="color:#f92672">.</span><span style="color:#a6e22e">MyPerson</span>
+classloadername:loader1
+com<span style="color:#960050;background-color:#1e0010">\</span>tang<span style="color:#960050;background-color:#1e0010">\</span>jvm<span style="color:#960050;background-color:#1e0010">\</span>classloader<span style="color:#960050;background-color:#1e0010">\</span>MyPerson
+finalClass invoke<span style="color:#f92672">:</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">tang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">jvm</span><span style="color:#f92672">.</span><span style="color:#a6e22e">classloader</span><span style="color:#f92672">.</span><span style="color:#a6e22e">MyPerson</span>
+classloadername:loader2
+com<span style="color:#960050;background-color:#1e0010">\</span>tang<span style="color:#960050;background-color:#1e0010">\</span>jvm<span style="color:#960050;background-color:#1e0010">\</span>classloader<span style="color:#960050;background-color:#1e0010">\</span>MyPerson
+<span style="color:#66d9ef">false</span>
+Exception in thread <span style="color:#e6db74">&#34;main&#34;</span> java<span style="color:#f92672">.</span><span style="color:#a6e22e">lang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">reflect</span><span style="color:#f92672">.</span><span style="color:#a6e22e">InvocationTargetException</span>
+	at sun<span style="color:#f92672">.</span><span style="color:#a6e22e">reflect</span><span style="color:#f92672">.</span><span style="color:#a6e22e">NativeMethodAccessorImpl</span><span style="color:#f92672">.</span><span style="color:#a6e22e">invoke0</span><span style="color:#f92672">(</span>Native Method<span style="color:#f92672">)</span>
+	at sun<span style="color:#f92672">.</span><span style="color:#a6e22e">reflect</span><span style="color:#f92672">.</span><span style="color:#a6e22e">NativeMethodAccessorImpl</span><span style="color:#f92672">.</span><span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>NativeMethodAccessorImpl<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>62<span style="color:#f92672">)</span>
+	at sun<span style="color:#f92672">.</span><span style="color:#a6e22e">reflect</span><span style="color:#f92672">.</span><span style="color:#a6e22e">DelegatingMethodAccessorImpl</span><span style="color:#f92672">.</span><span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>DelegatingMethodAccessorImpl<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>43<span style="color:#f92672">)</span>
+	at java<span style="color:#f92672">.</span><span style="color:#a6e22e">lang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">reflect</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Method</span><span style="color:#f92672">.</span><span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>Method<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>498<span style="color:#f92672">)</span>
+	at com<span style="color:#f92672">.</span><span style="color:#a6e22e">tang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">jvm</span><span style="color:#f92672">.</span><span style="color:#a6e22e">classloader</span><span style="color:#f92672">.</span><span style="color:#a6e22e">MyTest21</span><span style="color:#f92672">.</span><span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>MyTest21<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>22<span style="color:#f92672">)</span>
+Caused by<span style="color:#f92672">:</span> java<span style="color:#f92672">.</span><span style="color:#a6e22e">lang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">ClassCastException</span><span style="color:#f92672">:</span> com<span style="color:#f92672">.</span><span style="color:#a6e22e">tang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">jvm</span><span style="color:#f92672">.</span><span style="color:#a6e22e">classloader</span><span style="color:#f92672">.</span><span style="color:#a6e22e">MyPerson</span> cannot be cast to com<span style="color:#f92672">.</span><span style="color:#a6e22e">tang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">jvm</span><span style="color:#f92672">.</span><span style="color:#a6e22e">classloader</span><span style="color:#f92672">.</span><span style="color:#a6e22e">MyPerson</span>
+	at com<span style="color:#f92672">.</span><span style="color:#a6e22e">tang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">jvm</span><span style="color:#f92672">.</span><span style="color:#a6e22e">classloader</span><span style="color:#f92672">.</span><span style="color:#a6e22e">MyPerson</span><span style="color:#f92672">.</span><span style="color:#a6e22e">setPerson</span><span style="color:#f92672">(</span>MyPerson<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>6<span style="color:#f92672">)</span>
+	<span style="color:#f92672">...</span> 5 more
+</code></pre></div><h5 id="mytest22">MyTest22</h5>
+<p><strong>jar -cvf MyTest1.jar com\tang\jvm\classloader\MyTest1.class</strong>    因为拓展类加载器只加载jar包</p>
+<p><strong>java -Djava.ext.dirs=.\ com.tang.jvm.classloader.MyTest22</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyTest22</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">static</span><span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;MyTest22 initializer&#34;</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>MyTest22<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">());</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>MyTest1<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">());</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>MyTest22 initializer</p>
+<p>sun.misc.Launcher$AppClassLoader@2a139a55</p>
+<p>sun.misc.Launcher$ExtClassLoader@33909752</p>
+<h5 id="mytest23">MyTest23</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 在运行期，一个Java类是由该类的完全限定名（binary name）和用于加载该类的定义类加载器（defining loader）所共同决定的
+</span><span style="color:#75715e"> * 如果同样名字的类（即相同完全限定名）的类是由两个不同的加载器所加载，那么这些类就是不同的，即便.class字节码完全一样，
+</span><span style="color:#75715e"> * 并且从相同的位置加载亦如此。
+</span><span style="color:#75715e"> */</span>
+
+<span style="color:#f92672">import</span> sun.misc.Launcher<span style="color:#f92672">;</span>
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 在Oracle的HotSpot实现中，系统属性sun.boot.class.path如果修改错了
+</span><span style="color:#75715e"> * (java -Dsun.boot.class.path=.\com.tang.jvm.classloader.MyTest23)，
+</span><span style="color:#75715e"> * 则会出现运行时错误提示如下、
+</span><span style="color:#75715e"> * Error occurred during initialization of VM
+</span><span style="color:#75715e"> * java/lang/NoClassDefFoundError: java/lang/Object
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyTest23</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">getProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;sun.boot.class.path&#34;</span><span style="color:#f92672">));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">getProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;java.ext.dirs&#34;</span><span style="color:#f92672">));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">getProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;java.class.path&#34;</span><span style="color:#f92672">));</span>
+
+        <span style="color:#75715e">/**
+</span><span style="color:#75715e">         * 内建于JVM中的启动类加载器会加载java.lang.ClassLoader以及其他的Java平台类，
+</span><span style="color:#75715e">         * 当JVM启动时，一块特殊的机器码会运行，他会加载扩展类加载器与系统类加载器，
+</span><span style="color:#75715e">         * 这块特殊的机器码叫做启动类加载器（BootStrap）。
+</span><span style="color:#75715e">         *
+</span><span style="color:#75715e">         * 启动类加载器并不是java类，而其他的加载器则都是Java类，
+</span><span style="color:#75715e">         * 启动类加载器是特定于平台的机器指令，它负责开启整个加载过程
+</span><span style="color:#75715e">         * 所有类加载器（除了启动类加载器）都被实现为Java类。不过总归要有一个组件来加载第一个Java类加载器，从而
+</span><span style="color:#75715e">         * 让整个加载过程能够顺利进行下去，加载第一个纯加载器就是启动类加载器的职责
+</span><span style="color:#75715e">         *
+</span><span style="color:#75715e">         * 启动类加载器还会负责加载供JRE正常运行所需要的基本组件，这包括java.util与java.lang包中的类等等。
+</span><span style="color:#75715e">         */</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>ClassLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">());</span>
+        <span style="color:#75715e">//扩展类加载器和系统类加载器也是由启动类加载起加载的
+</span><span style="color:#75715e"></span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>Launcher<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">());</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;=======================&#34;</span><span style="color:#f92672">);</span>
+        ClassLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">getSystemClassLoader</span><span style="color:#f92672">();</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">getProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;java.system.class.loader&#34;</span><span style="color:#f92672">));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>MyTest23<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">());</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>MyTest16<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">());</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>ClassLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">getSystemClassLoader</span><span style="color:#f92672">());</span>
+
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>java -Djava.system.class.loader=com.tang.jvm.classloader.MyTest16 com.tang.jvm.classloader.MyTest23</p>
+<p>null</p>
+<p>null</p>
+<p>com.tang.jvm.classloader.MyTest16
+sun.misc.Launcher$AppClassLoader@18b4aac2
+sun.misc.Launcher$AppClassLoader@18b4aac2
+com.tang.jvm.classloader.MyTest16@6d06d69c</p>
+<p><img src="assets/1581599538377.png" alt="1581599538377"></p>
+<h5 id="mytest24">MyTest24</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 当前类加载器（Current Classloader）
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * 每一个类都会使用自己的类加载器（即加载自身的类加载器）来去加载其他类（指的是所依赖的类），
+</span><span style="color:#75715e"> * 如果ClassX引用了ClassY，那么ClassX的类加载器就会去加载ClassY（前提是ClassY尚未被加载）
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * 线程上下文类加载器（Context Classloader）
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * 线程上下文类加载器是从JDK1.2开始引入，类Thread中的getContextClassLoader和类setContextClassLoader（ClassLoader c1）
+</span><span style="color:#75715e"> * 分别用来获得和设置类加载器
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * 如果没有通过setContextCl assLoader（ClassLoader c1）进行设置的话，线程将继承父线程的上下文类加载器
+</span><span style="color:#75715e"> * Java应用运行时的初始线程的上下文类加载是系统类加载器。在线程中运行的代码可以通过该类加载器来加载类与资源，
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * 线程上下文类加载器的重要性：
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * SPI(Service Provider Interface)
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * 父ClassLoader可以使用当前线程的Thread.currentThread().getContextClassLoader()所指定的classloader加载的类。
+</span><span style="color:#75715e"> * 这就改变了父ClassLoader不能使用子Classloader或者是其他没有直接父子关系的ClassLoder加载的类的情况，即改变了双亲委托模型
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * 线程上下文类加载器就是当前线程的Current ClassLoader
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * 在双亲委托模型下，类加载器是由下到上，即下层的类加载器会委托上层进行加载，但对于SPI来说，有些接口是Java核心库所提供的，
+</span><span style="color:#75715e"> * 而Java核心库是由启动类加载器来加载的，而这些接口的实现来自于不同的jar包（厂商提供），Java的启动类加载器是不会加载其他来源的
+</span><span style="color:#75715e"> * jar包，这样传统的双亲委托模型就无法满足SPI的需要，而通过当前给当前线程设置上下文类加载器。，就可以由设置的上下文类加载器来实现
+</span><span style="color:#75715e"> * 对于接口实现类的加载
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyTest24</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>Thread<span style="color:#f92672">.</span><span style="color:#a6e22e">currentThread</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getContextClassLoader</span><span style="color:#f92672">());</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>Thread<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">());</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h5 id="jdni">JDNI</h5>
+<p>JNDI全名为Java Naming and Directory Interface.JNDI主要提供应用程序所需要资源上<a href="https://baike.baidu.com/item/%E5%91%BD%E5%90%8D/754576">命名</a>与<a href="https://baike.baidu.com/item/%E7%9B%AE%E5%BD%95%E6%9C%8D%E5%8A%A1/10413830">目录服务</a>。在Java EE环境中，JNDI扮演了一个很重要的角色，它提供了一个接口让用户在不知道资源所在位置的情形下，取得该资源服务。就好比网络<a href="https://baike.baidu.com/item/%E7%A3%81%E7%9B%98%E9%A9%B1%E5%8A%A8%E5%99%A8">磁盘驱动器</a>的功能一样。如果有人事先将另一台机器上的磁盘驱动器接到用户的机器上，用户在使用的时候根本就分辨不出现在的驱动器是存在本端，还是在另一端的机器上，用户只需取得资源来用，根本就不知道资源在什么地方。</p>
+<p>​    API</p>
+<p>（Application Programming Interface）在大多数情况下，都是实现方制定接口并完成对接口的实现，调用方仅仅依赖接口调用，且无权选择不同实现。 从使用人员上来说，API 直接被应用开发人员使用。</p>
+<p>​    SPI</p>
+<p>（Service Provider Interface）是调用方来制定接口规范，提供给外部来实现，调用方在调用时则选择自己需要的外部实现。  从使用人员上来说，SPI 被框架扩展人员使用。</p>
+<p>MyTest26</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyTest26</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">MyTest26</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        ServiceLoader<span style="color:#f92672">&lt;</span>Driver<span style="color:#f92672">&gt;</span> serviceLoader <span style="color:#f92672">=</span> ServiceLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">load</span><span style="color:#f92672">(</span>Driver<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+        Iterator iterator <span style="color:#f92672">=</span> serviceLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">iterator</span><span style="color:#f92672">();</span>
+
+        <span style="color:#66d9ef">while</span><span style="color:#f92672">(</span>iterator<span style="color:#f92672">.</span><span style="color:#a6e22e">hasNext</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+            Driver driver <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>Driver<span style="color:#f92672">)</span>iterator<span style="color:#f92672">.</span><span style="color:#a6e22e">next</span><span style="color:#f92672">();</span>
+            System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;driver:&#34;</span> <span style="color:#f92672">+</span> driver<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">()</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;loader:&#34;</span> <span style="color:#f92672">+</span> driver<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">());</span>
+        <span style="color:#f92672">}</span>
+
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;当前线程上下文类加载器:&#34;</span> <span style="color:#f92672">+</span> Thread<span style="color:#f92672">.</span><span style="color:#a6e22e">currentThread</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getContextClassLoader</span><span style="color:#f92672">());</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;serviceLoader的类加载器：&#34;</span> <span style="color:#f92672">+</span> serviceLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">());</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">ServiceLoader<span style="color:#f92672">&lt;</span>Driver<span style="color:#f92672">&gt;</span> serviceLoader <span style="color:#f92672">=</span> ServiceLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">load</span><span style="color:#f92672">(</span>Driver<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#f92672">&lt;</span>S<span style="color:#f92672">&gt;</span> ServiceLoader<span style="color:#f92672">&lt;</span>S<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">load</span><span style="color:#f92672">(</span>Class<span style="color:#f92672">&lt;</span>S<span style="color:#f92672">&gt;</span> service<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>	
+    <span style="color:#75715e">//这里需要调用当前上下文类加载器，因为MyTest26是AppClassLoader加载的，ServiceLoader是被
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//被委托给启动类加载器加载的，所以这里面的代码也应该由启动类加载器加载，但是启动类加载器不能加在位
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//于classpath下的mysql驱动，所以采用ContextClassLoader来获取当前线程上下文类加载器来加载驱动
+</span><span style="color:#75715e"></span>    ClassLoader cl <span style="color:#f92672">=</span> Thread<span style="color:#f92672">.</span><span style="color:#a6e22e">currentThread</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getContextClassLoader</span><span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">return</span> ServiceLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">load</span><span style="color:#f92672">(</span>service<span style="color:#f92672">,</span> cl<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div>
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

@@ -6,10 +6,178 @@
     <description>Recent content on My New Hugo Site</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 21 Mar 2020 23:29:33 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 22 Mar 2020 00:30:18 +0800</lastBuildDate>
     
 	<atom:link href="https://theemperoryao.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>2</title>
+      <link>https://theemperoryao.github.io/post/2/</link>
+      <pubDate>Sun, 22 Mar 2020 00:30:18 +0800</pubDate>
+      
+      <guid>https://theemperoryao.github.io/post/2/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Java并发编程之美摘要总结</title>
+      <link>https://theemperoryao.github.io/post/java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BE%8E%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Sun, 22 Mar 2020 00:30:18 +0800</pubDate>
+      
+      <guid>https://theemperoryao.github.io/post/java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BE%8E%E7%AC%94%E8%AE%B0/</guid>
+      <description>Java并发编程之美摘要总结 第一章 并发编程基础 1.1 什么是线程  线程是进程中的一个实体。 进程是代码在数据集合上的一次运行活动，是系统进行资源分配和调度的基本单位，线程则是进程的一个执行路径，进程中多个线程共享进程的资源。 真正占用CPU执行的是线程，也就是说线程是CPU分配的基本单位。 启动main函数时，就是启动一个JVM进程，main函数所在线程(在这个进程中)叫做主线程。  进程和线程的关系  多个线程共享进程的堆和方法的资源 但是每个线程有自己的程序计数器和栈区域 ==程序计数器是一块内存区域，记录当前线程要执行的指令地址==  为何要将程序计数器设计为线程私有呢？  线程是占用CPU的执行单位，而CPU 一般是使用时间片轮转的方式让线程轮询占用,所以当前的线程CPU时间片用完之后，要让出CPU，等下次轮到自己的时候再执行。
+程序计数器就是为了记录该线程让出CPU时的执行地址的，待再次分配到时间片时线程就可以从自己的私有的计数器指定地址继续执行。
+需要注意的是，如果执行的是native方法，那么pc计数器记录的是undefined地址，只有执行的是java代码时，pc计数器记录的才是下一条指令的地址。
+  每个线程都有自己的栈资源，用于存储该线程的局部变量，栈还用来存放线程的调用栈帧 堆是进程中最大的一块内存，存放使用new操作创建的对象实例 方法区则是用来存放JVM加载的类，常量，静态变量等信息  1.2 线程的创建与运行  三种方式创建    继承Thread类并重写run方法
+  实现Runnable接口的run方法
+  使用FuntureTask方法（着重分析一下这种）   public class CallerTask implements Callable {public static void main(String[] args) throws ExecutionException, InterruptedException {FutureTask&amp;lt;String&amp;gt; futureTask = new FutureTask&amp;lt;&amp;gt;(new CallerTask());new Thread(futureTask).start();String result = futureTask.</description>
+    </item>
+    
+    <item>
+      <title>MySQL高级</title>
+      <link>https://theemperoryao.github.io/post/mysql%E9%AB%98%E7%BA%A7/</link>
+      <pubDate>Sun, 22 Mar 2020 00:30:18 +0800</pubDate>
+      
+      <guid>https://theemperoryao.github.io/post/mysql%E9%AB%98%E7%BA%A7/</guid>
+      <description>MySQL高级 rpm命令是RPM软件包的管理工具。rpm原本是Red Hat Linux发行版专门用来管理Linux各项套件的程序，由于它遵循GPL规则且功能强大方便，因而广受欢迎。逐渐受到其他发行版的采用。RPM套件管理方式的出现，让Linux易于安装，升级，间接提升了Linux的适用度。
+rpm常见命令参数 `用法: rpm [选项...]``-a：查询所有套件；``-b&amp;lt;完成阶段&amp;gt;&amp;lt;套件档&amp;gt;+或-t &amp;lt;完成阶段&amp;gt;&amp;lt;套件档&amp;gt;+：设置包装套件的完成阶段，并指定套件档的文件名称；``-c：只列出组态配置文件，本参数需配合``&amp;quot;-l&amp;quot;``参数使用；``-d：只列出文本文件，本参数需配合``&amp;quot;-l&amp;quot;``参数使用；``-e&amp;lt;套件档&amp;gt;或--erase&amp;lt;套件档&amp;gt;：删除指定的套件；``-f&amp;lt;文件&amp;gt;+：查询拥有指定文件的套件；``-h或--``hash``：套件安装时列出标记；``-i：显示套件的相关信息；``-i&amp;lt;套件档&amp;gt;或--``install``&amp;lt;套件档&amp;gt;：安装指定的套件档；``-l：显示套件的文件列表；``-p&amp;lt;套件档&amp;gt;+：查询指定的RPM套件档；``-q：使用询问模式，当遇到任何问题时，rpm指令会先询问用户；``-R：显示套件的关联性信息；``-s：显示文件状态，本参数需配合``&amp;quot;-l&amp;quot;``参数使用；``-U&amp;lt;套件档&amp;gt;或--upgrade&amp;lt;套件档&amp;gt;：升级指定的套件档；``-``v``：显示指令执行过程；``-vv：详细显示指令执行过程，便于排错。`rpm -ivh 有日志进度条提示
+ps -ef| grep mysql ps -ef 的意思显示系统执行进程
+-e 显示所有终端机下执行的进程
+-f 指的是显示UID,PPIP,C与STIME栏位
+grep 是搜索过滤
+ps -ef | grep mysql的含义就是显示系统执行进程，从显示的全部进程信息中搜索包含mysql字符串的信息，并显示出来</description>
+    </item>
+    
+    <item>
+      <title>深入浅出Spring Boot</title>
+      <link>https://theemperoryao.github.io/post/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAspring-boot/</link>
+      <pubDate>Sun, 22 Mar 2020 00:30:18 +0800</pubDate>
+      
+      <guid>https://theemperoryao.github.io/post/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAspring-boot/</guid>
+      <description>深入浅出Spring Boot 1.IOC简介 一种描述来生成或获取对象的技术
+ 通过描述管理Bean，包括发布和获取Bean； 通过描述完成Bean之间的依赖关系  Bean：在Spring中，把每一个需要管理的对象成为Spring Bean（简称Bean）
+BeanFactory
+其中多个的是getBean方法，可以按照类型（by type）或者名称（by name）获取
+ApplicationContext
+BeanFactory不够强大，在此基础上设计了一个更为高级的接口，是BeanFactory子接口之一
+拓展了
+ApplicationEventPublisher（事件发布接口），
+EnvironmentCapable（环境可配置接口），
+MessageSource（消息国际化接口），
+ResourcePatternResolver（资源模式解析接口）
+下面是用注解的方式装配Bean到Spring IOC容器中
+@Bean方式装配
+package com.springboot.chapter3.pojo;import lombok.Getter;import lombok.Setter;@Getter@Setterpublic class Student {private int no;private String name;private int age;}package com.springboot.chapter3.config;import com.springboot.chapter3.pojo.Student;import org.springframework.context.annotation.Bean;import org.springframework.context.annotation.Configuration;//代表这是一个Java配置文件，Spring容器会根据他来生成IOC容器去装配Bean@Configurationpublic class StudentConfig {//将此方法返回的POJO装配到IOC容器中,默认为 @Bean(&amp;#34;student&amp;#34;)public Student initStudent(){Student student=new Student();student.setNo(1630200169);student.</description>
+    </item>
+    
+    <item>
+      <title>深入理解JDK8</title>
+      <link>https://theemperoryao.github.io/post/jdk8-/</link>
+      <pubDate>Sun, 22 Mar 2020 00:30:18 +0800</pubDate>
+      
+      <guid>https://theemperoryao.github.io/post/jdk8-/</guid>
+      <description>JDK8 1.Grande介绍 .Grandle/Maven:目录结构一样的，约定优于配置
+源代码:src/main/java
+配置文件:src/main/resources
+测试代码：src/text/java
+测试配置文件：src/text/resources
+页面相关:src/main/webapp
+setting.gradle:项目名字
+build.gradle:项目的描述，类似于pom.xml，包括项目所依赖的信息
+sourceCompatibility = 1.8//源代码兼容性targetCompatibility = 1.8//编译后代码兼容性dependencies {// testCompile group: &#39;junit&#39;, name: &#39;junit&#39;, version: &#39;4.12&#39;testCompile(&amp;quot;junit:junit:4.11&amp;quot;)}2.Lambda表达式基本格式 (param1,param2,param3)-&amp;gt;{
+}
+package com.tang.jdk8;import javax.swing.*;import java.awt.event.ActionEvent;import java.awt.event.ActionListener;public class SwingTest {public static void main(String[] args) {JFrame jFrame = new JFrame(&amp;#34;My JFrame&amp;#34;);JButton jButton = new JButton(&amp;#34;My JButton&amp;#34;);//按按钮之后会自动调用方法 //java为静态类型语言，e为类型推断后结果， jButton.addActionListener(e -&amp;gt; System.out.println(&amp;#34;Button Pressed！&amp;#34;));jFrame.</description>
+    </item>
+    
+    <item>
+      <title>深入理解JVM</title>
+      <link>https://theemperoryao.github.io/post/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3jvm/</link>
+      <pubDate>Sun, 22 Mar 2020 00:30:18 +0800</pubDate>
+      
+      <guid>https://theemperoryao.github.io/post/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3jvm/</guid>
+      <description>深入理解JVM 类加载  在Java代码中，类型（不表示对象，可以理解为class）的加载、连接与初始化过程都是在程序运行期间完成的（类型大多数都是存在的，也有在运行期动态生成的，例如动态代理） 提供了更大的灵活性  类型的加载最常见的情况：将已经存在的类的class文件从磁盘加载到内存里。
+连接：将类与类之间的关系确定好，对于字节码之间的处理如验证，校验
+初始化：对于静态变量赋值
+类加载器
+加载类的工具
+ Java虚拟机与程序的生命周期 在如下几种情况下，Java虚拟机将结束生命周期  执行了System.exit()方法 程序正常执行结束 程序在执行过程中遇到了异常或者错误而异常终止 由于操作系统出现错误而导致Java虚拟机进程终止    助记符
+getstatic
+putstatic
+invokestatic
+MyTest1 /*** 对于静态字段来说，只有直接定义了该字段的类才会被初始化* 当一个类初始化时，要求其父类全部已经初始化完毕了*/public class MyTest1 {public static void main(String[] args) {System.out.println(MyChilde1.str);}}class MyParent1{public static String str =&amp;#34;hello world&amp;#34;;static{System.out.println(&amp;#34;MyParent1 static block&amp;#34;);}}class MyChilde1 extends MyParent1{public static String str2 = &amp;#34;Welcome&amp;#34;;static{System.</description>
+    </item>
+    
+    <item>
+      <title>谷粒学院项目分析</title>
+      <link>https://theemperoryao.github.io/post/%E8%B0%B7%E7%B2%92%E5%AD%A6%E9%99%A2/</link>
+      <pubDate>Sun, 22 Mar 2020 00:30:18 +0800</pubDate>
+      
+      <guid>https://theemperoryao.github.io/post/%E8%B0%B7%E7%B2%92%E5%AD%A6%E9%99%A2/</guid>
+      <description>谷粒学院 配置环境 Docker自启动命令 systemctl enable docker
+下载mysql5.7 docker pull mysql:5.7
+检查所有镜像 docker images
+Linux环境搭建：https://www.cnblogs.com/songjilong/p/12612383.html
+docker运行mysql命令： docker run -p 3306:3306 &amp;ndash;name mysql
+-v /mydata/mysql/log:/var/log/mysql
+-v /mydata/mysql/data:/var/lib/mysql
+-v /mydata/mysql/conf:/etc/mysql
+-e MYSQL_ROOT_PASSWORD=root
+-d mysql:5.7
+docker安装redis mysql：https://www.cnblogs.com/songjilong/p/12613167.html
+npm config set registry http://registry.npm.taobao.org/
+npm i node-sass &amp;ndash;sass_binary_site=https://npm.taobao.org/mirrors/node-sass/
+npm install
+npm run dev
+出现了在互相可以ping的到的情况下无法连接到navicat，之前手欠修改了权限且密码输成了123456，实际为root，现在改回来
+grant all privileges on . to &amp;lsquo;root&amp;rsquo;@&#39;%&amp;rsquo; identified by &amp;lsquo;root&amp;rsquo;; by后面为自己的数据库root用户的密码
+https://github.com/alibaba/spring-cloud-alibaba
+&amp;lt;dependencyManagement&amp;gt;&amp;lt;dependencies&amp;gt;&amp;lt;dependency&amp;gt;&amp;lt;groupId&amp;gt;com.alibaba.cloud&amp;lt;/groupId&amp;gt;&amp;lt;artifactId&amp;gt;spring-cloud-alibaba-dependencies&amp;lt;/artifactId&amp;gt;&amp;lt;version&amp;gt;2.2.0.RELEASE&amp;lt;/version&amp;gt;&amp;lt;type&amp;gt;pom&amp;lt;/type&amp;gt;&amp;lt;scope&amp;gt;import&amp;lt;/scope&amp;gt;&amp;lt;/dependency&amp;gt;&amp;lt;/dependencies&amp;gt;&amp;lt;/dependencyManagement&amp;gt;如何使用nacos作为配置中心统一管理配置  nacos核心 nacos作为服务中心 application.</description>
+    </item>
+    
+    <item>
+      <title>速查小知识点</title>
+      <link>https://theemperoryao.github.io/post/%E9%80%9F%E6%9F%A5%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/</link>
+      <pubDate>Sun, 22 Mar 2020 00:30:18 +0800</pubDate>
+      
+      <guid>https://theemperoryao.github.io/post/%E9%80%9F%E6%9F%A5%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/</guid>
+      <description>刷leetcode的常见小点，难点 1.整数的差积之和 public static int subtractProductAndSum2(int n) {int prod = 1;int sum = 0;while (n &amp;gt;0){prod *= (n % 10);sum += (n % 10);n=n/10;}return prod-sum;}2.char转int方法 chars[i] - &amp;#39;0&amp;#39;3.list转int[] list.stream().mapToInt(Integer::valueOf).toArray()4.ListNode反转链表（递归法） （图是leetcode上面其他同学制作的，做的真棒）
+public static ListNode reverseList(ListNode head) {if (head == null || head.next == null) return head;//p指向最后一个结点 ListNode p = reverseList(head.next);head.next.next = head;head.next = null;return p;}思想：指针p通过递归到找最后一个ListNode结点，head.</description>
+    </item>
+    
+    <item>
+      <title>hugo博客搭建命令</title>
+      <link>https://theemperoryao.github.io/post/hugo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E5%91%BD%E4%BB%A4/</link>
+      <pubDate>Sat, 21 Mar 2020 23:29:33 +0800</pubDate>
+      
+      <guid>https://theemperoryao.github.io/post/hugo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E5%91%BD%E4%BB%A4/</guid>
+      <description>hugo new site myblog
+git clone https://github.com/digitalcraftsman/hugo-agency-theme
+hugo server -t hugo-agency-theme &amp;ndash;buildDrafts
+hugo new post/blog.md
+hugo &amp;ndash;theme=hugo-agency-theme &amp;ndash;baseUrl=&amp;quot;https://lastknightcoder.github.io/&amp;rdquo; &amp;ndash;buildDrafts
+cd public
+git init
+git add .
+git commit -m &amp;ldquo;我的 hugo 博客第一次提交&amp;rdquo;
+git remote add origin https://github.com/LastKnightCoder/lastknightcoder.github.io.git
+git pull origin master &amp;ndash;allow-unrelated-histories(我第二次换主题的时候用了这个)
+git push -u origin master</description>
+    </item>
+    
+    <item>
+      <title>Java Collection FrameWork 源码分析（JDK8）</title>
+      <link>https://theemperoryao.github.io/post/java-collection-framework-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
+      <pubDate>Sat, 21 Mar 2020 23:29:33 +0800</pubDate>
+      
+      <guid>https://theemperoryao.github.io/post/java-collection-framework-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
+      <description>Java Collection FrameWork 源码分析（JDK8） 1.ArrayList 添加元素的方式和移除元素 add(E e) add(int index,E element)
+addAll(Collection&amp;lt;? extends E&amp;gt; c)
+addAll(int index, Collection&amp;lt;? extends E&amp;gt; c)
+remove(int index)
+remove(Object o)
+public boolean add(E e) {//确保添加元素后的容器（数组.length）是否放得下，size为数组中元素个数,size+1是添加后元素个数 ensureCapacityInternal(size + 1); // Increments modCount!! elementData[size++] = e;return true;}private static final int DEFAULT_CAPACITY = 10;private static final Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = {};private void ensureCapacityInternal(int minCapacity) {ensureExplicitCapacity(calculateCapacity(elementData, minCapacity));}private static int calculateCapacity(Object[] elementData, int minCapacity) {//如果数组elementData为空,说明现在数组还没被初始化，仅仅是有个引用 //那么minCapacity=size+1=1,空的数组没有办法存放元素，那么就将默认数组容量设为10并返回 //如果数组elementData不为空直接返回minCapacity if (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) {return Math.</description>
+    </item>
     
     <item>
       <title>设计模式（设计模式之禅）</title>
@@ -22,6 +190,36 @@
 2）所有引用基类的地方必须能透明地使用其子类的对象
  简单来说，只要是父类能出现的地方，子类就能出现，且不会出现任何异常和错误，反过来不一定成立。
 覆盖或实现父类方法时输入参数可以被放大 class Father { public Collection doSomething(HashMap hashMap){ System.out.println(&amp;#34;父类被执行。。。&amp;#34;); return hashMap.values(); } } class Son extends Father{ public Collection doSomething(Map map){ System.out.println(&amp;#34;子类被执行。。。&amp;#34;); return map.values(); } } public class Client{ public static void main(String[] args) { invoker(); } public static void invoker(){ // Father f=new Father();  Son f = new Son(); HashMap hashMap= new HashMap&amp;lt;&amp;gt;(); f.doSomething(hashMap); } } 这里发生了一个现象，不论是f是Father类型还是Son类型，结果输出都是 “父类被执行。。。”</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://theemperoryao.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://theemperoryao.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</guid>
+      <description>应用层
+应用层决定了向用户提供应用服务时通信的活动
+FTP（文件传输协议） DNS（域名系统），HTTP也处于该层
+运输层 提供处于网络连接中两台计算机的数据传输
+TCP（传输控制协议）和UDP（数据报协议）
+网络层
+用来处理在网络上流动的数据包
+链路层
+用来处理连接网络的硬件部分，包括操作系统，硬件驱动。</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://theemperoryao.github.io/post/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%A6%85/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://theemperoryao.github.io/post/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%A6%85/</guid>
+      <description>设计模式（设计模式之禅）  1.六大原责 1.1单一职责原则 1.2里氏替换原则 定义：
+ 1）如果对每一个类型为S的对象o1，都有类型为T的对 象o2，使得以T定义的所有程序P在所有的对象o1都代换成o2时，程序P的行为没有发生变 化，那么类型S是类型T的子类型。
+2）所有引用基类的地方必须能透明地使用其子类的对象
+ 简单来说，只要是父类能出现的地方，子类就能出现，且不会出现任何异常和错误，反过来不一定成立。
+覆盖或实现父类方法时输入参数可以被放大 class Father {public Collection doSomething(HashMap hashMap){System.out.println(&amp;#34;父类被执行。。。&amp;#34;);return hashMap.values();}}class Son extends Father{public Collection doSomething(Map map){System.out.println(&amp;#34;子类被执行。。。&amp;#34;);return map.values();}}public class Client{public static void main(String[] args) {invoker();}public static void invoker(){// Father f=new Father(); Son f = new Son();HashMap hashMap= new HashMap&amp;lt;&amp;gt;();f.doSomething(hashMap);}}这里发生了一个现象，不论是f是Father类型还是Son类型，结果输出都是 “父类被执行。。。”</description>
     </item>
     
   </channel>

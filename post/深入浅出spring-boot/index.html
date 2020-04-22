@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>深入浅出Spring Boot // My New Hugo Site</title>
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.67.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="John Doe" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://theemperoryao.github.io/css/main.min.f90f5edd436ec7b74ad05479a05705770306911f721193e7845948fb07fe1335.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="深入浅出Spring Boot"/>
+<meta name="twitter:description" content="深入浅出Spring Boot 1.IOC简介 一种描述来生成或获取对象的技术
+ 通过描述管理Bean，包括发布和获取Bean； 通过描述完成Bean之间的依赖关系  Bean：在Spring中，把每一个需要管理的对象成为Spring Bean（简称Bean）
+BeanFactory
+其中多个的是getBean方法，可以按照类型（by type）或者名称（by name）获取
+ApplicationContext
+BeanFactory不够强大，在此基础上设计了一个更为高级的接口，是BeanFactory子接口之一
+拓展了
+ApplicationEventPublisher（事件发布接口），
+EnvironmentCapable（环境可配置接口），
+MessageSource（消息国际化接口），
+ResourcePatternResolver（资源模式解析接口）
+下面是用注解的方式装配Bean到Spring IOC容器中
+@Bean方式装配
+package com.springboot.chapter3.pojo;import lombok.Getter;import lombok.Setter;@Getter@Setterpublic class Student {private int no;private String name;private int age;}package com.springboot.chapter3.config;import com.springboot.chapter3.pojo.Student;import org.springframework.context.annotation.Bean;import org.springframework.context.annotation.Configuration;//代表这是一个Java配置文件，Spring容器会根据他来生成IOC容器去装配Bean@Configurationpublic class StudentConfig {//将此方法返回的POJO装配到IOC容器中,默认为 @Bean(&#34;student&#34;)public Student initStudent(){Student student=new Student();student.setNo(1630200169);student."/>
+
+    <meta property="og:title" content="深入浅出Spring Boot" />
+<meta property="og:description" content="深入浅出Spring Boot 1.IOC简介 一种描述来生成或获取对象的技术
+ 通过描述管理Bean，包括发布和获取Bean； 通过描述完成Bean之间的依赖关系  Bean：在Spring中，把每一个需要管理的对象成为Spring Bean（简称Bean）
+BeanFactory
+其中多个的是getBean方法，可以按照类型（by type）或者名称（by name）获取
+ApplicationContext
+BeanFactory不够强大，在此基础上设计了一个更为高级的接口，是BeanFactory子接口之一
+拓展了
+ApplicationEventPublisher（事件发布接口），
+EnvironmentCapable（环境可配置接口），
+MessageSource（消息国际化接口），
+ResourcePatternResolver（资源模式解析接口）
+下面是用注解的方式装配Bean到Spring IOC容器中
+@Bean方式装配
+package com.springboot.chapter3.pojo;import lombok.Getter;import lombok.Setter;@Getter@Setterpublic class Student {private int no;private String name;private int age;}package com.springboot.chapter3.config;import com.springboot.chapter3.pojo.Student;import org.springframework.context.annotation.Bean;import org.springframework.context.annotation.Configuration;//代表这是一个Java配置文件，Spring容器会根据他来生成IOC容器去装配Bean@Configurationpublic class StudentConfig {//将此方法返回的POJO装配到IOC容器中,默认为 @Bean(&#34;student&#34;)public Student initStudent(){Student student=new Student();student.setNo(1630200169);student." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://theemperoryao.github.io/post/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAspring-boot/" />
+<meta property="article:published_time" content="2020-03-22T00:30:18+08:00" />
+<meta property="article:modified_time" content="2020-03-22T00:30:18+08:00" />
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://theemperoryao.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="John Doe" /></a>
+      <h1>My New Hugo Site</h1>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vehicula turpis sit amet elit pretium.</p>
+      <div class="app-header-social">
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">深入浅出Spring Boot</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Mar 22, 2020
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          2 min read
+        </div></div>
+    </header>
+    <div class="post-content">
+      <h3 id="深入浅出spring-boot">深入浅出Spring Boot</h3>
+<h4 id="1ioc简介">1.IOC简介</h4>
+<p>一种描述来生成或获取对象的技术</p>
+<ul>
+<li>通过描述管理Bean，包括发布和获取Bean；</li>
+<li>通过描述完成Bean之间的依赖关系</li>
+</ul>
+<p><strong>Bean：在Spring中，把每一个需要管理的对象成为Spring Bean（简称Bean）</strong></p>
+<p><strong>BeanFactory</strong></p>
+<p><img src="http://static.jiebianjia.com/typora/792d0a970e4298aac35159a4adbffdb1.png" alt="1584447987574"></p>
+<p>其中多个的是getBean方法，可以按照类型（by type）或者名称（by name）获取</p>
+<p><strong>ApplicationContext</strong></p>
+<p><img src="http://static.jiebianjia.com/typora/12301ce45ffdbd1790c3f0f30f30b26e.png" alt="1584448251137"></p>
+<p>BeanFactory不够强大，在此基础上设计了一个更为高级的接口，是BeanFactory子接口之一</p>
+<p>拓展了</p>
+<p><strong>ApplicationEventPublisher（事件发布接口）</strong>，</p>
+<p><strong>EnvironmentCapable（环境可配置接口），</strong></p>
+<p><strong>MessageSource（消息国际化接口）</strong>，</p>
+<p><strong>ResourcePatternResolver（资源模式解析接口）</strong></p>
+<p>下面是用注解的方式装配Bean到Spring IOC容器中</p>
+<p><strong>@Bean方式装配</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> com.springboot.chapter3.pojo<span style="color:#f92672">;</span>
+
+<span style="color:#f92672">import</span> lombok.Getter<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> lombok.Setter<span style="color:#f92672">;</span>
+
+<span style="color:#a6e22e">@Getter</span>
+<span style="color:#a6e22e">@Setter</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Student</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">int</span> no<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> String name<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">int</span> age<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> com.springboot.chapter3.config<span style="color:#f92672">;</span>
+
+<span style="color:#f92672">import</span> com.springboot.chapter3.pojo.Student<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.context.annotation.Bean<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.context.annotation.Configuration<span style="color:#f92672">;</span>
+
+<span style="color:#75715e">//代表这是一个Java配置文件，Spring容器会根据他来生成IOC容器去装配Bean
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">@Configuration</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">StudentConfig</span> <span style="color:#f92672">{</span>
+    <span style="color:#75715e">//将此方法返回的POJO装配到IOC容器中,默认为
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">@Bean</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;student&#34;</span><span style="color:#f92672">)</span>
+    <span style="color:#66d9ef">public</span> Student <span style="color:#a6e22e">initStudent</span><span style="color:#f92672">(){</span>
+        Student student<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Student<span style="color:#f92672">();</span>
+        student<span style="color:#f92672">.</span><span style="color:#a6e22e">setNo</span><span style="color:#f92672">(</span>1630200169<span style="color:#f92672">);</span>
+        student<span style="color:#f92672">.</span><span style="color:#a6e22e">setName</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;唐尧&#34;</span><span style="color:#f92672">);</span>
+        student<span style="color:#f92672">.</span><span style="color:#a6e22e">setAge</span><span style="color:#f92672">(</span>22<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> student<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> com.springboot.chapter3.config<span style="color:#f92672">;</span>
+
+<span style="color:#f92672">import</span> com.springboot.chapter3.pojo.Student<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.context.ApplicationContext<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.context.annotation.AnnotationConfigApplicationContext<span style="color:#f92672">;</span>
+
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyIOCTest</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#75715e">//将配置文件StudentConfig传递给AnnotationConfigApplicationContext构造方法，就能读取配置
+</span><span style="color:#75715e"></span>        ApplicationContext ctx<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> AnnotationConfigApplicationContext<span style="color:#f92672">(</span>StudentConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+        <span style="color:#75715e">//Student stu = (Student) ctx.getBean(&#34;student&#34;);
+</span><span style="color:#75715e"></span>        Student stu <span style="color:#f92672">=</span> ctx<span style="color:#f92672">.</span><span style="color:#a6e22e">getBean</span><span style="color:#f92672">(</span>Student<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>stu<span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">());</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p><strong>@Component和@ComponentScan</strong></p>
+<p>一个一个用@Bean注入 SpringIoC太麻烦， 用扫描装配Bean到IoC容器</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Getter</span>
+<span style="color:#a6e22e">@Setter</span>
+<span style="color:#a6e22e">@Component</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;student&#34;</span><span style="color:#f92672">)</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Student</span> <span style="color:#f92672">{</span>
+    <span style="color:#a6e22e">@Value</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;1&#34;</span><span style="color:#f92672">)</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">int</span> no<span style="color:#f92672">;</span>
+    <span style="color:#a6e22e">@Value</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;tangyao&#34;</span><span style="color:#f92672">)</span>
+    <span style="color:#66d9ef">private</span> String name<span style="color:#f92672">;</span>
+    <span style="color:#a6e22e">@Value</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;22&#34;</span><span style="color:#f92672">)</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">int</span> age<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Configuration</span>
+<span style="color:#75715e">//默认只会扫描类StudentConfig所在类的当前包和字包
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">@ComponentScan</span><span style="color:#f92672">(</span>basePackages <span style="color:#f92672">=</span> <span style="color:#f92672">{</span><span style="color:#e6db74">&#34;com.springboot.chapter3.pojo&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;com.springboot.chapter3.service&#34;</span><span style="color:#f92672">})</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">StudentConfig</span> <span style="color:#f92672">{</span>
+  
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@ComponentScan</span><span style="color:#f92672">(</span>basePackages <span style="color:#f92672">=</span> <span style="color:#f92672">{</span><span style="color:#e6db74">&#34;com.springboot.chapter3.*&#34;</span><span style="color:#f92672">},</span>
+		excludeFilters <span style="color:#f92672">=</span> <span style="color:#a6e22e">@ComponentScan.Filter</span><span style="color:#f92672">(</span>classes <span style="color:#f92672">=</span> Service<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span> <span style="color:#f92672">),</span>lazyInit <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">)</span>
+</code></pre></div><p><strong>依赖注入</strong></p>
+<p>之前讨论的是Bean如何装配到IoC容器中，对于如何获取，还有一个作用没谈，那就是Bean之间的依赖。</p>
+<p>在Spring IoC中，称为依赖注入（DI）</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> com.springboot.chapter3.pojo<span style="color:#f92672">;</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Person</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">service</span><span style="color:#f92672">();</span>
+
+    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setAnimal</span><span style="color:#f92672">(</span>Animal animal<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> com.springboot.chapter3.pojo<span style="color:#f92672">;</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Animal</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">use</span><span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> com.springboot.chapter3.pojo<span style="color:#f92672">;</span>
+<span style="color:#a6e22e">@Component</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dog</span> <span style="color:#66d9ef">implements</span> Animal<span style="color:#f92672">{</span>
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">use</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;狗+[&#34;</span><span style="color:#f92672">+</span>Dog<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getSimpleName</span><span style="color:#f92672">()+</span><span style="color:#e6db74">&#34;]是看门的&#34;</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> com.springboot.chapter3.pojo<span style="color:#f92672">;</span>
+<span style="color:#a6e22e">@Component</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BussinessPerson</span> <span style="color:#66d9ef">implements</span> Person <span style="color:#f92672">{</span>
+
+    <span style="color:#a6e22e">@Autowired</span>
+    <span style="color:#66d9ef">private</span> Animal animal<span style="color:#f92672">;</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">service</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">animal</span><span style="color:#f92672">.</span><span style="color:#a6e22e">use</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setAnimal</span><span style="color:#f92672">(</span>Animal animal<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">animal</span> <span style="color:#f92672">=</span> animal<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Configuration</span>
+<span style="color:#a6e22e">@ComponentScan</span><span style="color:#f92672">(</span>basePackages <span style="color:#f92672">=</span> <span style="color:#f92672">{</span><span style="color:#e6db74">&#34;com.springboot.chapter3.*&#34;</span><span style="color:#f92672">})</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">StudentConfig</span> <span style="color:#f92672">{</span>
+   
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyIOCTest</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        ApplicationContext ctx<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> AnnotationConfigApplicationContext<span style="color:#f92672">(</span>StudentConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+        BussinessPerson person <span style="color:#f92672">=</span> ctx<span style="color:#f92672">.</span><span style="color:#a6e22e">getBean</span><span style="color:#f92672">(</span>BussinessPerson<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+        person<span style="color:#f92672">.</span><span style="color:#a6e22e">service</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>狗[Dog]是看门的</p>
+<p>如果增加一个Cat类那么会出现如下异常</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> com.springboot.chapter3.pojo<span style="color:#f92672">;</span>
+
+<span style="color:#f92672">import</span> org.springframework.stereotype.Component<span style="color:#f92672">;</span>
+
+<span style="color:#a6e22e">@Component</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Cat</span> <span style="color:#66d9ef">implements</span> Animal <span style="color:#f92672">{</span>
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">use</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;猫[&#34;</span><span style="color:#f92672">+</span>Cat<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getSimpleName</span><span style="color:#f92672">()+</span><span style="color:#e6db74">&#34;]是捉老鼠的&#34;</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p><img src="http://static.jiebianjia.com/typora/05a5d87091b48dc515557c693c490527.png" alt="1584456601666"></p>
+<p>因为Autowired是by type注入，所以为了解决这个问题，有如下几个方式</p>
+<p>1.修改为</p>
+<pre><code>@Autowired
+private Animal dog=null;  
+</code></pre><p>@Autowired根据类型找对应的Bean,如果Bean不唯一，则根据其属性名称和Bean的名称进行匹配。如果还无法匹配抛出异常</p>
+<p>2.消除歧义，使用@Primary或@Quelifier</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Autowired</span>
+<span style="color:#a6e22e">@Qualifier</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;dog&#34;</span><span style="color:#f92672">)</span>
+<span style="color:#66d9ef">private</span> Animal animal<span style="color:#f92672">;</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Component</span>
+<span style="color:#a6e22e">@Primary</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Cat</span> <span style="color:#66d9ef">implements</span> Animal<span style="color:#f92672">{</span>
+	<span style="color:#f92672">...</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>其实是根据BeanFactory接口中的这个方法</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> T <span style="color:#a6e22e">getBean</span><span style="color:#f92672">(</span>String name<span style="color:#f92672">,</span> Class<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> requiredType<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> BeansException<span style="color:#f92672">;</span>
+</code></pre></div><p><strong>带有参数的装配</strong></p>
+<p>之前都是在无参构造方法情况下，现在是有参构造方法的注入</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> Animal animal<span style="color:#f92672">=</span><span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+
+<span style="color:#66d9ef">public</span> <span style="color:#a6e22e">BussinessPerson</span><span style="color:#f92672">(</span><span style="color:#a6e22e">@Autowired</span> <span style="color:#a6e22e">@Qualifier</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;dog&#34;</span><span style="color:#f92672">)</span> Animal animal<span style="color:#f92672">){</span>
+    <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">animal</span><span style="color:#f92672">=</span>animal<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h4 id="2spring-bean生命周期">2.Spring Bean生命周期</h4>
+<p>1.1</p>
+<p><img src="http://static.jiebianjia.com/typora/156890177a74fb02e6202eea8511f18b.png" alt="1584447305512"></p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>
